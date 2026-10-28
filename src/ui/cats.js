@@ -18,6 +18,8 @@ export function initCats({ audio, mobile }) {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = innerWidth; H = innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
+    // CSS size follows innerHeight too, so iOS toolbars never stretch the cats
+    canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
   };
   resize();
   addEventListener('resize', resize);

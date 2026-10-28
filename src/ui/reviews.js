@@ -21,7 +21,8 @@ export function initReviews() {
     s.row.addEventListener('focusin', () => { s.hold = true; });
     s.row.addEventListener('focusout', () => { s.hold = false; });
   });
-  const measure = () => state.forEach((s) => { s.half = s.row.scrollWidth / 2; });
+  // one loop = the original notes plus the gap that follows the last of them
+  const measure = () => state.forEach((s) => { s.half = (s.row.scrollWidth + parseFloat(getComputedStyle(s.row).columnGap || 0)) / 2; });
   measure();
   addEventListener('resize', measure);
   addEventListener('load', measure);

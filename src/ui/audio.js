@@ -19,11 +19,16 @@ export function createAudio() {
   };
 
   // ---------- music source ----------
+  // Each source reports real playback through onPlaying, so the UI never shows music that is not there.
+  const onPlaying = (playing) => { if (musicOn !== playing) { musicOn = playing; emit(); } };
+
   const fileSource = () => fetch(SONG_FILE, { method: 'HEAD' }).then((r) => {
     if (!r.ok || !(r.headers.get('content-type') || '').includes('audio')) throw new Error('no file');
     const el = new Audio(SONG_FILE);
     el.loop = true;
     el.preload = 'auto';
+    el.addEventListener('playing', () => onPlaying(true));
+    el.addEventListener('pause', () => onPlaying(false));
     return { play: () => el.play(), pause: () => el.pause(), setVolume: (v) => { el.volume = v; } };
   });
 
@@ -36,10 +41,14 @@ export function createAudio() {
     document.body.appendChild(host);
     const make = () => {
       const yt = new window.YT.Player(slot, {
-        width: 240, height: 240, videoId: YT_ID,
+        width: 240, height: 240, videoId: YT_ID, host: 'https://www.youtube-nocookie.com',
         playerVars: { controls: 0, disablekb: 1, loop: 1, playlist: YT_ID, playsinline: 1, rel: 0 },
         events: {
-          onReady: () => resolve({ play: () => yt.playVideo(), pause: () => yt.pauseVideo(), setVolume: (v) => yt.setVolume(Math.round(v * 100)) }),
+          onReady: () => {
+            yt.getIframe().tabIndex = -1;
+            resolve({ play: () => yt.playVideo(), pause: () => yt.pauseVideo(), setVolume: (v) => yt.setVolume(Math.round(v * 100)) });
+          },
+          onStateChange: (e) => onPlaying(e.data === window.YT.PlayerState.PLAYING || e.data === window.YT.PlayerState.BUFFERING),
           onError: reject,
         },
       });
@@ -56,10 +65,16 @@ export function createAudio() {
     setTimeout(() => reject(new Error('youtube timeout')), 12000);
   });
 
-  const ready = fileSource().catch(youtubeSource).then((p) => (player = p)).catch((e) => {
-    console.warn('music unavailable', e);
-    return null;
-  });
+  // nothing third-party loads until the visitor reaches for the music
+  const hasFile = fileSource().catch(() => null);
+  let ready = null;
+  const prime = () => {
+    ready ??= hasFile.then((f) => f || youtubeSource()).then((p) => (player = p)).catch((e) => {
+      console.warn('music unavailable', e);
+      return null;
+    });
+    return ready;
+  };
 
   let fadeRaf = 0;
   const fadeTo = (target, ms = 2400) => {
@@ -76,21 +91,24 @@ export function createAudio() {
     fadeRaf = requestAnimationFrame(step);
   };
 
+  // resolves true once sound is really coming out, false if the browser blocked it
   async function play() {
     ac();
-    const p = player || (await ready);
+    const p = player || (await prime());
     if (!p) return false;
     p.setVolume(fadeTo.v ?? 0);
     try { await p.play(); } catch { return false; }
-    musicOn = true;
     fadeTo(0.8);
-    emit();
-    return true;
+    if (musicOn) return true;
+    return new Promise((res) => {
+      const done = (on) => { listeners.delete(done); clearTimeout(t); res(on); };
+      const t = setTimeout(() => done(false), 3500);
+      listeners.add(done);
+    });
   }
   function pause() {
-    musicOn = false;
     fadeTo(0, 900);
-    emit();
+    setTimeout(() => onPlaying(false), 950);
   }
 
   // ---------- effects: all synthesised, no files ----------
@@ -155,7 +173,7 @@ export function createAudio() {
   };
 
   return {
-    play, pause,
+    play, pause, prime,
     toggle: () => (musicOn ? pause() : play()),
     get on() { return musicOn; },
     onChange: (fn) => listeners.add(fn),

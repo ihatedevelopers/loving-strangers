@@ -23,6 +23,12 @@ export function initPass({ audio, toast }) {
       duration: 1.3, ease: 'power2.in', onComplete: () => { front.style.visibility = 'hidden'; },
     });
     gsap.from(stub.querySelector('.pass__stub-back > *'), { scale: 0.7, opacity: 0, duration: 0.6, ease: 'back.out(2)', delay: 0.2 });
+    copy();
+  };
+  const copyBtn = pass.querySelector('[data-copy]');
+  const copy = async () => {
+    const code = copyBtn.dataset.copy;
+    try { await navigator.clipboard.writeText(code); toast('code copied! paste it at checkout ✦'); pass.querySelector('[data-copied]').textContent = 'copied ✓'; } catch { toast(`your code: ${code}`); }
   };
 
   stub.addEventListener('pointerdown', (e) => {
@@ -49,9 +55,5 @@ export function initPass({ audio, toast }) {
   stub.addEventListener('pointercancel', release);
   pass.querySelector('[data-tear-btn]').addEventListener('click', tear);
 
-  pass.querySelector('[data-copy]').addEventListener('click', async (e) => {
-    const code = e.currentTarget.dataset.copy;
-    try { await navigator.clipboard.writeText(code); toast('copied! use it at checkout ✦'); } catch { toast(`your code: ${code}`); }
-    pass.querySelector('[data-copied]').textContent = 'copied ✓';
-  });
+  copyBtn.addEventListener('click', copy);
 }

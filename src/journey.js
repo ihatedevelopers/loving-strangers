@@ -32,7 +32,9 @@ const CLIMB = {
   alt: [0, 0, 40, 400, 1200, 2351],
 };
 
-export function initJourney({ world, mobile, reduced }) {
+// The journey starts right away; the 3D world plugs in whenever it is ready (or never, on old devices).
+export function initJourney({ mobile, reduced }) {
+  let world = null;
   const pin = document.querySelector('.world-pin');
   const pinPos = { x: 0, y: 0, visible: false };
   let pinOn = false;
@@ -47,21 +49,6 @@ export function initJourney({ world, mobile, reduced }) {
     world.goal.night = night;
   };
 
-  if (world) {
-    world.setPointer(0, 0);
-    if (!mobile) {
-      window.addEventListener('pointermove', (e) => world.setPointer((e.clientX / innerWidth) * 2 - 1, -((e.clientY / innerHeight) * 2 - 1)), { passive: true });
-    }
-    world.onFrame(() => {
-      if (!pinOn) return;
-      world.project(world.hostelAnchor, pinPos);
-      pin.style.transform = `translate3d(${pinPos.x}px, ${pinPos.y}px, 0)`;
-      pin.classList.toggle('is-on', pinPos.visible);
-    });
-    setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
-    world.snap();
-  }
-
   // ---------- arrival ----------
   const lines = gsap.utils.toArray('.arrival [data-line]');
   const hud = document.querySelector('[data-hud-dist]');
@@ -71,6 +58,8 @@ export function initJourney({ world, mobile, reduced }) {
     el.style.opacity = o;
     el.style.transform = `translateY(${(1 - o) * 26}px)`;
     el.style.filter = o < 1 ? `blur(${(1 - o) * 6}px)` : '';
+    // invisible text must not catch clicks or keyboard focus
+    el.style.visibility = o > 0.02 ? 'visible' : 'hidden';
   };
   ScrollTrigger.create({
     trigger: '.arrival',
@@ -90,7 +79,7 @@ export function initJourney({ world, mobile, reduced }) {
   });
 
   // the paper house slides over the island: stop drawing while it covers the screen
-  ScrollTrigger.create({
+  const houseST = ScrollTrigger.create({
     trigger: '.house',
     start: 'top top',
     end: 'bottom bottom',
@@ -189,6 +178,27 @@ export function initJourney({ world, mobile, reduced }) {
     onLeaveBack() { /* the night trigger takes over again */ },
   });
 
-  if (!world) canvas.remove();
   ScrollTrigger.refresh();
+
+  return {
+    attach(w) {
+      if (!w) { canvas.remove(); return; }
+      world = w;
+      world.setPointer(0, 0);
+      if (!mobile) {
+        window.addEventListener('pointermove', (e) => world.setPointer((e.clientX / innerWidth) * 2 - 1, -((e.clientY / innerHeight) * 2 - 1)), { passive: true });
+      }
+      world.onFrame(() => {
+        if (!pinOn) return;
+        world.project(world.hostelAnchor, pinPos);
+        pin.style.transform = `translate3d(${pinPos.x}px, ${pinPos.y}px, 0)`;
+        pin.classList.toggle('is-on', pinPos.visible);
+      });
+      // jump straight to wherever the page already is
+      setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
+      ScrollTrigger.getAll().forEach((st) => st.vars.onUpdate?.(st));
+      if (houseST.isActive) world.setActive(false);
+      world.snap();
+    },
+  };
 }

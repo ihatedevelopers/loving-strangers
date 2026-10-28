@@ -9,7 +9,6 @@ import { initRooms } from './ui/rooms.js';
 import { initPass } from './ui/pass.js';
 import { initNav } from './ui/nav.js';
 import { initReviews } from './ui/reviews.js';
-import { initJourney } from './journey.js';
 
 gsap.registerPlugin(ScrollTrigger);
 if (import.meta.env.DEV) Object.assign(window, { gsap, ScrollTrigger });
@@ -40,9 +39,9 @@ const toast = (msg) => {
 let world = null;
 const worldReady = import('./world/world.js')
   .then(async ({ createWorld }) => {
+    // probe on a throwaway canvas so three.js still chooses the real context's settings
+    if (!document.createElement('canvas').getContext('webgl2')) throw new Error('no webgl2');
     const canvas = document.getElementById('world');
-    const gl = canvas.getContext('webgl2');
-    if (!gl) throw new Error('no webgl2');
     world = await createWorld(canvas, { mobile });
     if (import.meta.env.DEV) window.__world = world;
     // nothing to draw behind the intro card yet
@@ -63,6 +62,7 @@ initReviews();
 
 initIntro({
   audio,
+  toast,
   onStart() {
     document.body.classList.remove('is-intro');
     lenis.start();
@@ -72,7 +72,11 @@ initIntro({
   },
 });
 
-worldReady.then((w) => initJourney({ world: w, mobile, reduced }));
+// the journey never waits for the 3D world: it starts now and the world joins when ready
+import('./journey.js').then(({ initJourney }) => {
+  const journey = initJourney({ mobile, reduced });
+  worldReady.then((w) => journey.attach(w));
+});
 
 // videos play only while you can see them
 const vio = new IntersectionObserver((entries) => {
@@ -86,4 +90,10 @@ const vio = new IntersectionObserver((entries) => {
 }, { rootMargin: '200px 0px' });
 document.querySelectorAll('[data-lazy-video]').forEach((v) => vio.observe(v));
 
+// the postcard illustration is the heaviest image: fetch it only on the way down
+const card = document.querySelector('.postcard');
+const cio = new IntersectionObserver(([e]) => { if (e.isIntersecting) { card.classList.add('is-near'); cio.disconnect(); } }, { rootMargin: '1500px 0px' });
+cio.observe(card);
+
 window.addEventListener('load', () => ScrollTrigger.refresh());
+document.fonts?.ready.then(() => ScrollTrigger.refresh());

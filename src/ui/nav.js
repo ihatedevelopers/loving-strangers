@@ -12,6 +12,9 @@ export function initNav({ lenis, audio }) {
     const target = hash === '#contact' ? document.querySelector('[data-pass]') : el;
     const offset = hash === '#contact' ? -innerHeight * 0.18 : hash === '#pico' ? innerHeight * 1.2 : 0;
     lenis.scrollTo(target, { offset, duration: 2.2 });
+    // move keyboard and screen-reader focus along with the scroll
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
   };
   document.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
     const hash = a.getAttribute('href');
@@ -41,6 +44,7 @@ export function initNav({ lenis, audio }) {
 
   // the music toggle mirrors whatever the player is doing
   const sound = document.querySelector('[data-sound]');
+  sound.addEventListener('pointerenter', () => audio.prime(), { once: true });
   sound.addEventListener('click', () => audio.toggle());
   audio.onChange((on) => sound.setAttribute('aria-pressed', String(on)));
 }

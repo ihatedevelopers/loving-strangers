@@ -56,8 +56,9 @@ export function initRooms({ audio }) {
       el.classList.add('is-playing');
       if (performance.now() - last > 1800) { last = performance.now(); audio.sfx.strum(); }
     };
-    el.addEventListener('pointerenter', on);
-    el.addEventListener('pointerleave', () => el.classList.remove('is-playing'));
+    // mouse: hover plays; touch: each tap toggles (touch fires enter, leave and click in a row)
+    el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') on(); });
+    el.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') el.classList.remove('is-playing'); });
     el.addEventListener('click', () => (el.classList.contains('is-playing') ? el.classList.remove('is-playing') : on()));
   });
 

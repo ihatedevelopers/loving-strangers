@@ -325,8 +325,18 @@ void main(){
 
 export async function createWorld(canvas, { mobile = false } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance', alpha: false });
-  const px = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75);
+  let active = true;
+  // pixel ratio within a pixel budget: big retina screens get sharpness only while it stays affordable
+  const budget = mobile ? 1.4e6 : 2.6e6;
+  const pickPx = () => Math.max(0.75, Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75, Math.sqrt(budget / (innerWidth * innerHeight))));
+  let px = pickPx();
   renderer.setPixelRatio(px);
+  canvas.addEventListener('webglcontextlost', (e) => {
+    // iOS can drop the context in the background: fall back to the photo instead of a frozen canvas
+    e.preventDefault();
+    active = false;
+    document.documentElement.classList.add('no-webgl');
+  });
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 5, 40000);
@@ -343,6 +353,10 @@ export async function createWorld(canvas, { mobile = false } = {}) {
   const terrainMat = new THREE.ShaderMaterial({ uniforms, vertexShader: TERRAIN_VERT, fragmentShader: TERRAIN_FRAG });
   const worker = new Worker(new URL('./terrain.worker.js', import.meta.url), { type: 'module' });
   let jobs = 0;
+  const failed = new Promise((_, reject) => {
+    worker.addEventListener('error', reject);
+    setTimeout(() => reject(new Error('terrain worker timeout')), 15000);
+  });
   const makeGround = (x0, x1, z0, z1, sx, sz, edge = 0) => new Promise((resolve) => {
     const id = ++jobs;
     const onMsg = ({ data }) => {
@@ -360,11 +374,10 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     worker.postMessage({ id, x0, x1, z0, z1, sx, sz, edge });
   });
   const res = mobile ? 0.6 : 1;
-  const grounds = await Promise.all([
+  const grounds = await Promise.race([failed, Promise.all([
     makeGround(-2750, 5600, -3000, 3000, Math.round(360 * res), Math.round(260 * res), 700),
     makeGround(FAIAL.x - 2300, FAIAL.x + 2300, FAIAL.z - 2300, FAIAL.z + 2300, Math.round(110 * res), Math.round(110 * res)),
-  ]);
-  worker.terminate();
+  ])]).finally(() => worker.terminate());
   grounds.forEach((g) => scene.add(g));
 
   // ocean follows the camera so the horizon never ends
@@ -484,6 +497,9 @@ export async function createWorld(canvas, { mobile = false } = {}) {
 
   function resize() {
     const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
+    px = pickPx();
+    uniforms.uPx.value = px;
+    renderer.setPixelRatio(px);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -494,7 +510,7 @@ export async function createWorld(canvas, { mobile = false } = {}) {
   resize();
   window.addEventListener('resize', resize);
 
-  let active = true, raf = 0, last = performance.now(), onFrame = null;
+  let raf = 0, last = performance.now(), onFrame = null, odd = false;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function frame(now) {
@@ -540,10 +556,15 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     sky.position.copy(camera.position);
     sky.scale.setScalar(30000);
 
-    renderer.setRenderTarget(target);
-    renderer.render(scene, camera);
-    renderer.setRenderTarget(null);
-    renderer.render(postScene, postCam);
+    // once the camera has settled, draw "on twos": it matches the 8 fps line boil and saves battery
+    const settled = cur.pos.distanceToSquared(goal.pos) < 1 && Math.abs(goal.tod - cur.tod) < 0.002 && Math.abs(goal.night - cur.night) < 0.002 && pointerEased.distanceToSquared(pointer) < 1e-4;
+    odd = !odd;
+    if (!settled || odd) {
+      renderer.setRenderTarget(target);
+      renderer.render(scene, camera);
+      renderer.setRenderTarget(null);
+      renderer.render(postScene, postCam);
+    }
 
     onFrame?.(cur);
     if (active && !document.hidden) raf = requestAnimationFrame(frame);
@@ -552,12 +573,18 @@ export async function createWorld(canvas, { mobile = false } = {}) {
   const start = () => { if (!raf && active) { last = performance.now(); raf = requestAnimationFrame(frame); } };
   document.addEventListener('visibilitychange', start);
   // compile every shader in the background before the first frame
-  await Promise.all([renderer.compileAsync(scene, camera), renderer.compileAsync(postScene, postCam)]).catch(() => {});
+  // (compiled against the render target, whale included, so the real first frames hit the cache)
+  whale.visible = true;
+  renderer.setRenderTarget(target);
+  await renderer.compileAsync(scene, camera).catch(() => {});
+  renderer.setRenderTarget(null);
+  await renderer.compileAsync(postScene, postCam).catch(() => {});
+  whale.visible = false;
   start();
 
   return {
     goal,
-    scene,
+
     camera,
     hostelAnchor,
     setActive(v) { active = v; if (v) start(); },
