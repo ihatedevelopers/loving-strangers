@@ -30,6 +30,8 @@
   <div class="world-pin" aria-hidden="true"><span class="world-pin__dot"></span><span class="world-pin__label">we're here<br><b>the house with the yellow heart</b></span></div>
   <canvas id="cats" aria-hidden="true"></canvas>
   <div class="cursor-label mono" aria-hidden="true" data-cursor-label></div>
+  <div class="friends" aria-hidden="true" data-friends><b data-friends-n>0</b><span class="friends__line"><i data-friends-dot></i></span><small>strangers → friends</small></div>
+  <div class="actionbar" data-actionbar><a href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" class="actionbar__book">book now ↗</a><a href="https://wa.me/message/YYSGLP6X3SVEC1" target="_blank" rel="noopener" class="actionbar__wa"><i data-icon="whatsapp-logo"></i> ask us</a></div>
 
   <!-- loader: the sun fills up while the island loads -->
   <div class="loader" aria-hidden="true" data-loader>
@@ -62,6 +64,7 @@
       <div class="hero__stage">
         <video class="hero__video" data-hero-video muted playsinline autoplay loop preload="auto" poster="media/video/film-poster.webp" aria-hidden="true"></video>
         <div class="hero__shade" aria-hidden="true"></div>
+        <div class="hero__sunrise" aria-hidden="true" data-sunrise><span class="hero__disc" data-disc></span><span class="hero__sunmark" data-sunmark></span></div>
         <div class="hero__whiteout" aria-hidden="true" data-whiteout></div>
         <div class="hero__copy" data-hero-copy>
           <p class="hero__eyebrow mono">Madalena do Pico · Açores · 38.53° N 28.52° W</p>
@@ -89,7 +92,7 @@
         <p class="arrival__line" data-line="1">a volcano keeps its head in the clouds.</p>
         <p class="arrival__line" data-line="2">At its feet, in a small harbour town,<br>there is a white house with a yellow heart.</p>
         <div class="arrival__hud mono" aria-hidden="true">
-          <i data-icon="boat"></i><span>ferry from Faial</span><b data-hud-dist>9.8</b><span>km to the yellow door</span>
+          <i data-icon="boat"></i><span>ferry from Faial + a short walk:</span><b data-hud-dist>40</b><span>min to the yellow door</span>
         </div>
       </div>
     </section>
@@ -119,6 +122,7 @@
             <h3 class="room__name">the poets</h3>
             <p class="room__poem" data-poem="strangers are only friends|who haven't shared|a dinner yet."><span class="sr-only">strangers are only friends who haven't shared a dinner yet.</span></p>
             <ul class="room__facts mono"><li><i data-icon="moon-stars"></i>blackout curtains</li><li><i data-icon="books"></i>hammock chair &amp; a little library</li><li><i data-icon="lock"></i>personal lockers</li></ul>
+            <p class="room__price mono">bed from <b>€ —</b> / night · breakfast included</p>
           </div>
         </article>
 
@@ -127,22 +131,24 @@
           <div class="room__text">
             <p class="room__kind mono">shared dorm</p>
             <h3 class="room__name">the sculptors</h3>
-            <p class="room__copy">Bunks welded and built by hand, in black steel and warm wood. Go on, push the photo around: this room is still being shaped.</p>
-            <ul class="room__facts mono"><li><i data-icon="bed"></i>handmade bunks</li><li><i data-icon="moon-stars"></i>reading lamp each</li><li><i data-icon="shower"></i>rain shower</li></ul>
+            <p class="room__copy">Custom bunks in black steel and warm wood, each with its own curtain. Go on, push the photo around: this room is still being shaped.</p>
+            <ul class="room__facts mono"><li><i data-icon="bed"></i>custom-built bunks</li><li><i data-icon="moon-stars"></i>blackout curtains</li><li><i data-icon="lock"></i>personal lockers</li></ul>
+            <p class="room__price mono">bed from <b>€ —</b> / night · breakfast included</p>
           </div>
         </article>
 
         <article class="room room--photographers" data-room="photographers">
           <div class="room__media room__media--polaroid" data-develop data-tilt>
             <img data-pic="room-photographers-01-sunset-windows" alt="The photographers room glowing orange at sunset">
-            <span class="polaroid__caption">sunset, room 3</span>
+            <span class="polaroid__caption">sunset from the window</span>
             <button class="shutter mono" type="button" data-shutter data-cursor="click"><i data-icon="camera"></i>take the shot</button>
           </div>
           <div class="room__text">
             <p class="room__kind mono">private room</p>
             <h3 class="room__name">the photographers</h3>
             <p class="room__copy">Windows that catch the last light of the day. A room for anyone who stops to look twice at the same view.</p>
-            <ul class="room__facts mono"><li><i data-icon="bed"></i>double bed</li><li><i data-icon="mountains"></i>terrace with mountain views</li><li><i data-icon="shower"></i>private bathroom</li></ul>
+            <ul class="room__facts mono"><li><i data-icon="bed"></i>double bed</li><li><i data-icon="mountains"></i>terrace or patio</li><li><i data-icon="shower"></i>private bathroom</li></ul>
+            <p class="room__price mono">room from <b>€ —</b> / night · breakfast included</p>
           </div>
         </article>
 
@@ -156,8 +162,16 @@
             <h3 class="room__name">the musicians</h3>
             <p class="room__copy">A shelf of records, a big soft bed and Pico in the window. Bring a song, there's always a guitar downstairs.</p>
             <ul class="room__facts mono"><li><i data-icon="couch"></i>double bed &amp; sofa</li><li><i data-icon="vinyl-record"></i>vinyl shelf</li><li><i data-icon="mountains"></i>volcano in the window</li></ul>
+            <p class="room__price mono">room from <b>€ —</b> / night · breakfast included</p>
           </div>
         </article>
+      </div>
+
+      <div class="included">
+        <p class="eyebrow mono">every stay includes</p>
+        <ul class="included__list">
+          <li><i data-icon="coffee"></i>vegetarian breakfast</li><li><i data-icon="bed"></i>bed linen</li><li><i data-icon="lock"></i>a locker</li><li><i data-icon="fire"></i>the fire pit &amp; garden</li><li><i data-icon="books"></i>shared kitchen</li><li><i data-icon="couch"></i>lounge, bar &amp; karaoke</li><li><i data-icon="clock"></i>co-working desks</li>
+        </ul>
       </div>
 
       <!-- the places in between: a walk through the house -->
@@ -197,7 +211,7 @@
             <article class="place place--fire" data-color="#e0531f">
               <h3 class="place__title display"><span class="sr-only">a place to</span> sit by the fire <em>with strangers.</em></h3>
               <div class="place__media" data-tilt><img data-pic="connect-firepit-flames-sparks" alt="Flames and sparks rising from the fire pit at night"></div>
-              <p class="place__name mono"><i data-icon="fire"></i> the fire pit · every night</p>
+              <p class="place__name mono"><i data-icon="fire"></i> the fire pit</p>
             </article>
           </div>
           <div class="trail" aria-hidden="true">
@@ -211,7 +225,7 @@
         <div class="dinners__text">
           <p class="eyebrow mono">loving dinners</p>
           <p class="quote display">“The warmth of a shared meal can't be replicated in a <em>virtual chat.</em>”</p>
-          <p class="lede">A few nights a week one long table, one big pot, everyone. Soup, a main, dessert, and twenty languages.</p>
+          <p class="lede">One long table, one big pot and everyone around it: a starter, a soup, a main and dessert, cooked together with people you met that morning.</p>
         </div>
         <div class="dinners__stack" data-stack data-cursor="drag">
           <img data-pic="dinners-01-long-table-group-lights" alt="A long dinner table under string lights">
@@ -266,7 +280,7 @@
           <div class="stat"><b data-n="10">0</b><span>minutes from the ferry</span></div>
         </div>
         <div class="guestbook" data-guestbook>
-          <p class="guestbook__title mono"><span class="guestbook__dot"></span> a day at the house</p>
+          <p class="guestbook__title mono"><span class="guestbook__dot"></span> a typical day at the house</p>
           <div class="guestbook__lines" data-log aria-live="off"></div>
         </div>
       </div>
@@ -294,13 +308,13 @@
           <li class="stop" data-stop="1" data-tilt>
             <p class="stop__alt mono">0 m · the coast</p>
             <h3 class="stop__title">Swim in the lava</h3>
-            <p>Natural pools carved out of black basalt, filled by the Atlantic twice a day. Bring a towel, bring a stranger.</p>
+            <p>Natural pools carved out of black basalt and filled by the Atlantic. Bring a towel, bring a stranger.</p>
             <figure class="stop__pic"><img data-pic="pico-discover-07" alt="A natural swimming pool in black lava rock" sizes="(max-width: 760px) 80vw, 30vw"></figure>
           </li>
           <li class="stop" data-stop="2" data-tilt>
             <p class="stop__alt mono">40 m · the vineyards</p>
             <h3 class="stop__title">Walk the UNESCO vineyards</h3>
-            <p>Thousands of little stone walls, built from lava over five centuries to shelter the vines from the sea wind. Taste the Verdelho after.</p>
+            <p>Thousands of little stone walls, built from lava since the 15th century to shelter the vines from the sea wind. Taste the Verdelho after.</p>
             <figure class="stop__pic"><img data-pic="home-hikers-vineyard-walls-pico" alt="Three hikers between black stone vineyard walls" sizes="(max-width: 760px) 80vw, 30vw"></figure>
           </li>
           <li class="stop" data-stop="3" data-tilt>
@@ -336,27 +350,27 @@
       <div class="people">
         <article class="person" data-tilt>
           <div class="person__portrait">
-            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-a" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-a" textLength="534" lengthAdjust="spacing">PEDRO · CO-FOUNDER · KEEPER OF THE FIRE ·</textPath></text></svg>
+            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-a" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-a" textLength="534" lengthAdjust="spacing">PEDRO · CO-FOUNDER · YOUR HOST · LOVING ·</textPath></text></svg>
             <img data-pic="dinners-03-cook-in-garden" alt="Pedro cooking in the garden" sizes="260px">
           </div>
           <h3 class="person__name">Pedro</h3>
-          <p class="person__ask"><span class="mono">ask me about</span> the best spot to watch the sun go down behind Faial.</p>
+          <p class="person__ask"><span class="mono">a guest wrote</span> “Pedro and Stefan are incredible hosts who made us feel right at home.”</p>
         </article>
         <article class="person" data-tilt>
           <div class="person__portrait">
-            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-b" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-b" textLength="534" lengthAdjust="spacing">STEFAN · CO-FOUNDER · BUILDER OF BUNKS ·</textPath></text></svg>
+            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-b" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-b" textLength="534" lengthAdjust="spacing">STEFAN · CO-FOUNDER · YOUR HOST · LOVING ·</textPath></text></svg>
             <img data-pic="connection-05-guitar-player" alt="Stefan playing guitar by the fire" sizes="260px">
           </div>
           <h3 class="person__name">Stefan</h3>
-          <p class="person__ask"><span class="mono">ask me about</span> how a ruin became a house of artists, one welded bunk at a time.</p>
+          <p class="person__ask"><span class="mono">co-founder</span> One of the two strangers who opened this house to the world.</p>
         </article>
         <article class="person" data-tilt>
           <div class="person__portrait">
-            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-c" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-c" textLength="534" lengthAdjust="spacing">SOPHIE · HOST · PAINTER OF WALLS · YOGA ·</textPath></text></svg>
+            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-c" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-c" textLength="534" lengthAdjust="spacing">SOPHIE · HOST · JOINED THE FAMILY · LOVING ·</textPath></text></svg>
             <img data-pic="property-12-wall-painting-person-doorway" alt="Sophie painting a mural by the door" sizes="260px">
           </div>
           <h3 class="person__name">Sophie</h3>
-          <p class="person__ask"><span class="mono">ask me about</span> the murals, morning yoga in the greenhouse, and the hike nobody else will tell you about.</p>
+          <p class="person__ask"><span class="mono">a guest wrote</span> “Thanks to Stefan, Sophie and Pedro for the stay.”</p>
         </article>
         <article class="person person--cats" data-tilt>
           <div class="person__portrait">
@@ -371,9 +385,10 @@
 
     <!-- 5 · reviews (night) -->
     <section id="reviews" class="reviews night" aria-labelledby="reviews-title">
+      <div class="reviews__fire" aria-hidden="true"><video src="media/video/dusk.mp4" poster="media/video/dusk.webp" muted loop playsinline preload="none" data-lazy-video></video></div>
       <header class="reviews__head">
         <p class="eyebrow mono">04 — strangers say</p>
-        <h2 id="reviews-title" class="display">Five hundred strangers<br>can't <em>all be wrong.</em></h2>
+        <h2 id="reviews-title" class="display">What strangers say<br>around the <em>fire.</em></h2>
       </header>
       <ul class="scores">
         <li><a href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-magnetic data-cursor="open"><b data-count="9.9">9.9</b><span>/10</span><small class="mono">Hostelworld · 55 reviews ↗</small></a></li>
@@ -435,6 +450,12 @@
           </div>
         </div>
         <button class="pass__tear-btn mono" type="button" data-tear-btn>tear off the stub</button>
+      </div>
+
+      <div class="arrive">
+        <div class="arrive__col"><h3><i data-icon="boat"></i> by ferry</h3><p>From Faial (Horta) it's about 30 minutes by Atlânticoline ferry, and there are boats from São Jorge too. Madalena port is a 10 minute walk from our door.</p></div>
+        <div class="arrive__col"><h3><i data-icon="mountains"></i> by plane</h3><p>Pico airport (PIX) has direct flights from Lisbon, about 2.5 hours, and short hops from the other islands. Many travellers fly into Faial and take the ferry.</p></div>
+        <div class="arrive__col"><h3><i data-icon="clock"></i> good to know</h3><p>Check-in 15:00–20:00 · check-out 11:00 · quiet hours 23:00–08:00 · adults 18+ · pets on request. Arriving late? <a href="https://wa.me/message/YYSGLP6X3SVEC1" target="_blank" rel="noopener">Message us</a>.</p></div>
       </div>
 
       <div class="postcard" data-tilt>

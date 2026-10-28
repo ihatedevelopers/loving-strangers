@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { CatmullRomCurve3, Vector3 } from 'three';
+import { sunMark } from './ui/loader.js';
 
 // Scroll is the camera. Each chapter of the page owns a stretch of the flight.
 
@@ -26,19 +27,18 @@ const ARRIVAL = {
 
 // a typical day, written into the guestbook one line at a time
 const DAY = [
-  ['07:30', 'breakfast on the terrace, coffee for twelve'],
-  ['08:10', 'Pedro: “who wants to see whales?”'],
-  ['09:00', 'three strangers leave for the summit'],
+  ['08:30', 'vegetarian breakfast, the reception opens'],
+  ['09:00', 'two strangers leave to hike the vineyards'],
   ['10:20', 'the cats claim the hammock'],
   ['11:00', 'check-out hugs at the yellow door'],
   ['12:30', 'road trip to the lava pools, windows down'],
-  ['14:00', 'someone is painting the theatre wall again'],
-  ['15:00', 'check-in: a stranger from Finland'],
-  ['16:40', 'yoga in the greenhouse'],
-  ['17:50', 'whales spotted from the harbour'],
-  ['19:30', 'loving dinner · soup, a main, dessert, 14 languages'],
-  ['21:04', 'the fire pit is lit'],
-  ['22:15', 'a guitar, a song nobody knows the words to'],
+  ['14:00', 'laptops out in the co-working room'],
+  ['15:00', 'check-in: new strangers arrive'],
+  ['16:40', 'stretching in the greenhouse'],
+  ['18:00', 'sunset over Faial from the garden'],
+  ['19:30', 'one long table, one big pot'],
+  ['21:00', 'the fire pit is lit'],
+  ['22:15', 'a guitar comes out, then karaoke'],
   ['23:00', 'quiet hours. the stars take over'],
 ];
 
@@ -76,6 +76,11 @@ export function initJourney({ mobile }) {
   const cue = hero.querySelector('.hero__cue');
   const whiteout = hero.querySelector('[data-whiteout]');
   const stage = hero.querySelector('.hero__stage');
+  // the logo's sun rises over the film, turns, swells until its yellow fills the screen, and that yellow becomes paper
+  const sunrise = hero.querySelector('[data-sunrise]');
+  const disc = hero.querySelector('[data-disc]');
+  const mark = hero.querySelector('[data-sunmark]');
+  mark.innerHTML = sunMark();
   let heroP = 0;
   const heroUpdate = (p) => {
     heroP = p;
@@ -85,10 +90,17 @@ export function initJourney({ mobile }) {
     heroCopy.style.opacity = 1 - clamp01(p / 0.28);
     heroCopy.style.visibility = p > 0.3 ? 'hidden' : 'visible';
     cue.style.opacity = 1 - clamp01(p * 8);
-    // fog rolls over the film, the fog is paper, the island is drawn on it
-    whiteout.style.opacity = smooth(clamp01((p - 0.38) / 0.22));
-    world?.setDraw(clamp01((p - 0.6) / 0.38));
-    const fade = 1 - clamp01((p - 0.6) / 0.1);
+    const rise = smooth(clamp01((p - 0.16) / 0.22));
+    const swell = clamp01((p - 0.4) / 0.18);
+    sunrise.style.transform = `translate(-50%, -50%) scale(${rise}) rotate(${p * 160}deg)`;
+    // the disc must outgrow the screen's diagonal
+    const discPx = sunrise.offsetWidth * 0.52;
+    disc.style.transform = `scale(${1 + swell * swell * (Math.hypot(innerWidth, innerHeight) / Math.max(1, discPx))})`;
+    mark.style.opacity = 1 - clamp01(swell * 2.2);
+    // the yellow cools into paper, and the island is drawn on it
+    whiteout.style.opacity = smooth(clamp01((p - 0.55) / 0.08));
+    world?.setDraw(clamp01((p - 0.63) / 0.35));
+    const fade = 1 - clamp01((p - 0.63) / 0.08);
     stage.style.opacity = fade;
     stage.style.visibility = fade > 0 ? 'visible' : 'hidden';
     // the film only plays while you can see it
@@ -122,9 +134,12 @@ export function initJourney({ mobile }) {
       show(lines[2], 0.62, 1, t);
       pinOn = t > 0.58;
       if (!pinOn) pin.classList.remove('is-on');
-      hud.textContent = Math.max(0, 9.8 * (1 - t)).toFixed(1);
+      hud.textContent = Math.max(0, Math.round(40 * (1 - t)));
       setView(ARRIVAL.pos.getPoint(t), ARRIVAL.look.getPoint(t), keys(ARRIVAL.fov, t), keys(ARRIVAL.tod, t));
     },
+    // once you're past the harbour the pin has done its job
+    onLeave() { pinOn = false; pin.classList.remove('is-on'); },
+    onLeaveBack() { pinOn = false; pin.classList.remove('is-on'); },
   });
 
   // the paper house slides over the island: stop drawing while it covers the screen
@@ -215,6 +230,21 @@ export function initJourney({ mobile }) {
     gsap.to(el.querySelector('.person__ring'), { rotate: 200, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
 
+  // ---------- strangers → friends, across the whole stay ----------
+  const friendsN = document.querySelector('[data-friends-n]');
+  const friendsDot = document.querySelector('[data-friends-dot]');
+  ScrollTrigger.create({
+    start: 0, end: 'max',
+    onUpdate: (st) => {
+      friendsN.textContent = Math.round(smooth(st.progress) * 548);
+      friendsDot.style.bottom = `calc(${st.progress * 100}% - 5px)`;
+    },
+  });
+  ScrollTrigger.create({ trigger: '.pico', start: 'top 60%', end: 'bottom 40%', onToggle: (st) => document.body.classList.toggle('in-pico', st.isActive) });
+
+  // the fire behind the reviews drifts slower than the page
+  gsap.fromTo('.reviews__fire', { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: '.reviews', start: 'top bottom', end: 'bottom top', scrub: true } });
+
   // ---------- the last word ----------
   gsap.fromTo('.mega > *', { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.4, ease: 'power4.out', stagger: 0.12, scrollTrigger: { trigger: '.foot', start: 'top 85%' } });
 
@@ -272,12 +302,13 @@ export function initJourney({ mobile }) {
     trigger: '.creators',
     start: 'top 85%',
     endTrigger: '.reviews',
-    end: 'bottom 40%',
+    end: 'bottom 75%',
     onUpdate(st) {
       const t = st.progress;
       setView(NIGHT_POS, V(lerp(-3200, -900, t), lerp(560, 2600, Math.min(1, t * 2)), lerp(420, 1600, t)), 56, 3, 1);
     },
     onToggle(st) { document.body.classList.toggle('on-night', st.isActive); },
+    onLeave() { document.body.classList.remove('on-night'); },
   });
 
   // ---------- dawn: back to the sea for the ticket ----------

@@ -14,6 +14,13 @@ function sunSVG() {
   </svg>`;
 }
 
+// The plain logo sun (rays in their own group so they can turn), used for the hero's sunrise.
+export function sunMark() {
+  const parts = sunPaths.trim().split('\n');
+  const core = parts.pop();
+  return `<svg class="sun-svg" viewBox="0 0 875.4 875.9" aria-hidden="true"><g class="rays" data-rays>${parts.join('')}</g>${core}</svg>`;
+}
+
 // Time-based like the portfolio loader: never stalls on a slow device, opens within 6 s at most.
 export function initLoader({ ready, onReveal }) {
   const loader = document.querySelector('[data-loader]');

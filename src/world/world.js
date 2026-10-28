@@ -71,7 +71,7 @@ void main(){
   vec2 v = vW.xz + vec2(vnoise(vW.xz * .02), vnoise(vW.xz * .02 + 9.)) * 6.;
   float walls = max(inkLine(v.x / 13., .7), inkLine(v.y / 10., .7));
   float vineZone = smoothstep(4., 9., h) * (1. - smoothstep(55., 80., h)) * smoothstep(-1150., -1450., vW.x) * smoothstep(-260., -420., vW.z);
-  ink = max(ink, walls * vineZone * .5);
+  ink = max(ink, walls * vineZone * .28 * step(.35, vnoise(vW.xz * .045)));
   yel *= 1. - vineZone * .6;
 
   // the shoreline: one confident line, plus a broken second one like a wave pulling back
