@@ -67,7 +67,7 @@ initPlayButton({ audio, toast });
 
 // the opening film: smaller file on phones
 const heroVideo = document.querySelector('[data-hero-video]');
-heroVideo.src = mobile ? 'media/video/intro-720.mp4' : 'media/video/intro-1080.mp4';
+heroVideo.src = mobile ? 'media/video/film-480.mp4' : 'media/video/film-720.mp4';
 const filmReady = new Promise((res) => {
   heroVideo.addEventListener('canplaythrough', res, { once: true });
   setTimeout(res, 4000);
@@ -80,6 +80,7 @@ initLoader({
   ready: Promise.all([filmReady, Promise.race([worldReady, timeout(5500)])]),
   onReveal() {
     document.body.classList.remove('is-loading');
+    heroVideo.dataset.started = 1;
     heroVideo.play().catch(() => {});
     lenis.start();
     cats?.wake();

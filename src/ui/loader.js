@@ -48,8 +48,9 @@ export function initLoader({ ready, onReveal }) {
     tl.to(loader.querySelector('.loader__sun'), { y: -220, rotate: 40, opacity: 0, duration: 0.9, ease: 'power3.in' })
       .to('.loader__n, .loader__t', { opacity: 0, duration: 0.4 }, 0)
       .to(loader, { yPercent: -100, duration: 1.1, ease: 'power4.inOut' }, 0.5)
-      .fromTo('.hero__title .w > *', { yPercent: 115, rotate: 4 }, { yPercent: 0, rotate: 0, duration: 1.6, ease: 'power4.out', stagger: 0.12 }, 2.9)
-      .fromTo('.hero__eyebrow, .hero__sub, .hero__actions > *, .hero__cue', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.08 }, 3.4);
+      .fromTo('.hero__video', { scale: 1.25 }, { scale: 1, duration: 2.2, ease: 'power3.out', clearProps: 'transform' }, 0.6)
+      .fromTo('.hero__title .w > *', { yPercent: 115, rotate: 4 }, { yPercent: 0, rotate: 0, duration: 1.4, ease: 'power4.out', stagger: 0.1 }, 0.95)
+      .fromTo('.hero__eyebrow, .hero__sub, .hero__actions > *, .hero__cue', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out', stagger: 0.08 }, 1.3);
   };
   tick();
 }

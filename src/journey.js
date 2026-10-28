@@ -68,43 +68,32 @@ export function initJourney({ mobile }) {
     world.goal.night = night;
   };
 
-  // ---------- hero: up through the clouds on load, back down through them on scroll ----------
+  // ---------- hero: the house's own film; scrolling zooms in, the fog rolls over and the island is drawn ----------
   const hero = document.querySelector('[data-hero]');
   const heroVideo = hero.querySelector('[data-hero-video]');
   const heroCopy = hero.querySelector('[data-hero-copy]');
   const heroShade = hero.querySelector('.hero__shade');
   const cue = hero.querySelector('.hero__cue');
   const whiteout = hero.querySelector('[data-whiteout]');
-  let heroP = 0, scrubbing = false, seekTo = -1, seeking = false;
-  // seek one frame at a time: never queue seeks faster than the decoder can answer
-  const seek = () => {
-    if (seeking || seekTo < 0) return;
-    seeking = true;
-    heroVideo.currentTime = seekTo;
-    seekTo = -1;
-  };
-  heroVideo.addEventListener('seeked', () => { seeking = false; seek(); });
+  const stage = hero.querySelector('.hero__stage');
+  let heroP = 0;
   const heroUpdate = (p) => {
     heroP = p;
-    if (p > 0.002 && !scrubbing && heroVideo.duration) { scrubbing = true; heroVideo.pause(); }
-    if (scrubbing && heroVideo.duration) {
-      // 0 → 0.55: the drone sinks back into the cloud sea (the film runs backwards)
-      seekTo = Math.max(0, heroVideo.duration * (1 - smooth(clamp01(p / 0.55))) - 0.04);
-      seek();
-    }
-    // 0.42 → 0.62: inside the cloud everything turns white, and the white is paper
-    whiteout.style.opacity = clamp01((p - 0.42) / 0.2);
-    heroVideo.style.transform = `scale(${1 + 0.18 * p})`;
-    // 0.6 → 0.98: the island is drawn onto that paper
-    world?.setDraw(clamp01((p - 0.6) / 0.38));
-    heroShade.style.opacity = 1 - clamp01(p / 0.3);
-    heroCopy.style.transform = `translate3d(0, ${-p * 320}px, 0)`;
-    heroCopy.style.opacity = 1 - clamp01(p / 0.25);
-    heroCopy.style.visibility = p > 0.27 ? 'hidden' : 'visible';
+    heroVideo.style.transform = `scale(${1 + 0.38 * smooth(clamp01(p / 0.6))}) translateY(${p * 6}%)`;
+    heroShade.style.opacity = 1 - clamp01((p - 0.25) / 0.25);
+    heroCopy.style.transform = `translate3d(0, ${-p * 340}px, 0)`;
+    heroCopy.style.opacity = 1 - clamp01(p / 0.28);
+    heroCopy.style.visibility = p > 0.3 ? 'hidden' : 'visible';
     cue.style.opacity = 1 - clamp01(p * 8);
-    const fade = 1 - clamp01((p - 0.6) / 0.12);
-    whiteout.style.visibility = heroVideo.style.visibility = fade > 0 ? 'visible' : 'hidden';
-    hero.querySelector('.hero__stage').style.opacity = fade;
+    // fog rolls over the film, the fog is paper, the island is drawn on it
+    whiteout.style.opacity = smooth(clamp01((p - 0.38) / 0.22));
+    world?.setDraw(clamp01((p - 0.6) / 0.38));
+    const fade = 1 - clamp01((p - 0.6) / 0.1);
+    stage.style.opacity = fade;
+    stage.style.visibility = fade > 0 ? 'visible' : 'hidden';
+    // the film only plays while you can see it
+    if (fade > 0 && heroVideo.paused && heroVideo.dataset.started) heroVideo.play().catch(() => {});
+    if (fade <= 0 && !heroVideo.paused) heroVideo.pause();
     setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
   };
   ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', onUpdate: (st) => heroUpdate(st.progress) });

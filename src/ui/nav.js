@@ -8,9 +8,9 @@ export function initNav({ lenis, audio }) {
   const go = (hash) => {
     const el = document.querySelector(hash);
     if (!el) return;
-    // the pass is the end of the journey: land on it, not on the section title
-    const target = hash === '#contact' ? document.querySelector('[data-pass]') : el;
-    const offset = hash === '#contact' ? -innerHeight * 0.18 : hash === '#pico' ? innerHeight * 1.2 : 0;
+    // "find us" goes straight to the address card; the discount pass is a reward for scrolling
+    const target = hash === '#contact' ? document.querySelector('.postcard') : el;
+    const offset = hash === '#contact' ? -innerHeight * 0.12 : hash === '#pico' ? innerHeight * 1.2 : 0;
     lenis.scrollTo(target, { offset, duration: 2.2 });
     // move keyboard and screen-reader focus along with the scroll
     if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
