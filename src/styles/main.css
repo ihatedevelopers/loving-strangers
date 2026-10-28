@@ -321,13 +321,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .postcard__info p { margin: 0 0 .8em; }
 .postcard__info a { text-decoration-color: var(--sun); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .postcard__logo { width: 22%; margin: 0 auto .6em; }
-.postcard__small { max-width: 980px; margin: 22px auto 0; text-align: center; color: var(--ink-soft); }
+.postcard__small { max-width: 980px; width: fit-content; margin: 22px auto 0; text-align: center; color: var(--ink-soft); background: var(--paper); padding: 8px 16px; border-radius: 10px; }
 
 .foot { position: relative; z-index: 3; background: var(--ink); color: var(--paper); text-align: center; padding: 70px var(--gutter) 40px; }
 .foot p { margin: 0; opacity: .7; }
+.foot .mega { opacity: 1; padding-bottom: .22em; }
 
 .toast { position: fixed; left: 50%; bottom: 24px; z-index: 260; transform: translate(-50%, 140%); background: var(--ink); color: var(--sun); padding: 10px 18px; border-radius: 999px; transition: transform .5s var(--ease); }
 .toast.is-on { transform: translate(-50%, 0); }
+.toast:empty { visibility: hidden; }
 
 /* ---------- icons ---------- */
 .ico { width: 1.15em; height: 1.15em; vertical-align: -.2em; flex: none; }
@@ -424,8 +426,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .person { text-align: center; }
 .person:nth-child(even) { margin-top: 10vh; }
 .person__portrait { position: relative; width: 100%; aspect-ratio: 1; display: grid; place-items: center; }
-.person__portrait img { width: 70%; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 4px solid var(--sun); transition: transform .6s var(--ease); }
-.person:hover .person__portrait img { transform: scale(1.06); }
+.person__portrait img, .person__placeholder { width: 70%; height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 4px solid var(--sun); transition: transform .6s var(--ease), filter .6s; }
+/* portraits share one black & white look (Pedro's photo is b/w); colour comes back on hover */
+.person__portrait img { filter: grayscale(1) contrast(1.05); }
+.person:hover .person__portrait img { transform: scale(1.06); filter: none; }
+.person__placeholder { display: grid; place-content: center; justify-items: center; gap: 4px; background: radial-gradient(circle at 50% 40%, #2c2d27, #1b1c19); color: var(--sun); }
+.person__placeholder b { font: italic 300 clamp(60px, 6vw, 96px)/1 var(--f-display); }
+.person__placeholder small { color: rgba(241, 229, 198, .5); }
 .person__ring { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--cream); font: 500 11.5px var(--f-mono); letter-spacing: .22em; overflow: visible; }
 .person__name { font: italic 400 clamp(30px, 2.6vw, 42px)/1 var(--f-display); margin: 8px 0 8px; color: var(--sun); }
 .person__ask { margin: 0 auto; max-width: 18em; color: rgba(241, 229, 198, .85); font-size: 15px; }
@@ -433,7 +440,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- footer: the mega line ---------- */
 .foot { overflow: hidden; }
-.mega { margin: 0 0 30px; font: 300 clamp(60px, 14vw, 230px)/.9 var(--f-display); letter-spacing: -.05em; color: var(--paper); font-variation-settings: 'SOFT' 100, 'opsz' 144; }
+.mega { margin: 0 0 20px; font: 300 clamp(60px, 14vw, 230px)/.9 var(--f-display); letter-spacing: -.05em; color: var(--paper); font-variation-settings: 'SOFT' 100, 'opsz' 144; }
 .mega em { font-style: italic; color: var(--sun); font-variation-settings: 'SOFT' 100, 'WONK' 1, 'opsz' 144; }
 .postcard__social { display: flex; justify-content: center; gap: 12px; font-size: 24px; }
 .postcard__social a { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid var(--ink); text-decoration: none; }
