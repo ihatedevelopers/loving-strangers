@@ -8,6 +8,7 @@ const V = (x, y, z) => new Vector3(x, y, z);
 const path = (pts) => new CatmullRomCurve3(pts, false, 'centripetal');
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (t) => Math.min(1, Math.max(0, t));
+const smooth = (t) => t * t * (3 - 2 * t);
 // piecewise-linear through evenly spaced keys
 const keys = (arr, t) => {
   const x = clamp01(t) * (arr.length - 1);
@@ -22,28 +23,6 @@ const ARRIVAL = {
   fov: [28, 34, 40, 44],
   tod: [0, 0.45, 0.85, 1],
 };
-
-// ink-outlined clouds (like the tile's) that rush past the camera over the opening film
-function makeClouds(host) {
-  const specs = [
-    { w: 30, x: -6, speed: 1.9 }, { w: 22, x: 66, speed: 2.5 }, { w: 36, x: 32, speed: 1.6 }, { w: 18, x: 12, speed: 2.9 }, { w: 26, x: 78, speed: 2.1 },
-  ];
-  return specs.map((c, k) => {
-    const circles = [[38, 78, 30], [82, 58, 42], [134, 50, 50], [186, 62, 40], [228, 80, 28]].map(([x, y, r]) => [x, y + ((k * 7 + x) % 9) - 4, r]);
-    const ring = (d) => circles.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r - d}"/>`).join('');
-    const el = document.createElement('div');
-    el.className = 'hero__cloud';
-    el.style.setProperty('--w', `${c.w}vw`);
-    el.style.setProperty('--x', `${c.x}vw`);
-    el.innerHTML = `<svg viewBox="0 0 270 104"><defs><clipPath id="cl${k}"><rect width="270" height="92"/></clipPath></defs>
-      <g clip-path="url(#cl${k})"><g fill="#25261f">${ring(-3)}</g><g fill="#fffdf6">${ring(0)}</g></g>
-      <path d="M6 92 H264" stroke="#25261f" stroke-width="6" stroke-linecap="round"/>
-      <path d="M118 66 q14 -16 30 -4" fill="none" stroke="#25261f" stroke-width="4" stroke-linecap="round"/></svg>`;
-    host.appendChild(el);
-    el.speed = c.speed;
-    return el;
-  });
-}
 
 // a typical day, written into the guestbook one line at a time
 const DAY = [
@@ -89,31 +68,43 @@ export function initJourney({ mobile }) {
     world.goal.night = night;
   };
 
-  // ---------- hero: the film, then its ink sketch, then the drawn island ----------
+  // ---------- hero: up through the clouds on load, back down through them on scroll ----------
   const hero = document.querySelector('[data-hero]');
   const heroVideo = hero.querySelector('[data-hero-video]');
   const heroCopy = hero.querySelector('[data-hero-copy]');
   const heroShade = hero.querySelector('.hero__shade');
   const cue = hero.querySelector('.hero__cue');
-  const clouds = makeClouds(hero.querySelector('[data-clouds]'));
-  let filmOn = false, heroP = 0;
+  const whiteout = hero.querySelector('[data-whiteout]');
+  let heroP = 0, scrubbing = false, seekTo = -1, seeking = false;
+  // seek one frame at a time: never queue seeks faster than the decoder can answer
+  const seek = () => {
+    if (seeking || seekTo < 0) return;
+    seeking = true;
+    heroVideo.currentTime = seekTo;
+    seekTo = -1;
+  };
+  heroVideo.addEventListener('seeked', () => { seeking = false; seek(); });
   const heroUpdate = (p) => {
     heroP = p;
-    const zoom = 1 + 0.35 * p;
-    if (filmOn) {
-      world.film.zoom = zoom;
-      world.film.sketch = clamp01((p - 0.38) / 0.24);
-      world.film.gone = clamp01((p - 0.64) / 0.32);
-    } else {
-      heroVideo.style.transform = `scale(${zoom})`;
-      heroVideo.style.opacity = 1 - clamp01((p - 0.7) / 0.25);
+    if (p > 0.002 && !scrubbing && heroVideo.duration) { scrubbing = true; heroVideo.pause(); }
+    if (scrubbing && heroVideo.duration) {
+      // 0 → 0.55: the drone sinks back into the cloud sea (the film runs backwards)
+      seekTo = Math.max(0, heroVideo.duration * (1 - smooth(clamp01(p / 0.55))) - 0.04);
+      seek();
     }
-    heroShade.style.opacity = 1 - clamp01((p - 0.3) / 0.2);
+    // 0.42 → 0.62: inside the cloud everything turns white, and the white is paper
+    whiteout.style.opacity = clamp01((p - 0.42) / 0.2);
+    heroVideo.style.transform = `scale(${1 + 0.18 * p})`;
+    // 0.6 → 0.98: the island is drawn onto that paper
+    world?.setDraw(clamp01((p - 0.6) / 0.38));
+    heroShade.style.opacity = 1 - clamp01(p / 0.3);
     heroCopy.style.transform = `translate3d(0, ${-p * 320}px, 0)`;
-    heroCopy.style.opacity = 1 - clamp01(p / 0.3);
-    heroCopy.style.visibility = p > 0.32 ? 'hidden' : 'visible';
+    heroCopy.style.opacity = 1 - clamp01(p / 0.25);
+    heroCopy.style.visibility = p > 0.27 ? 'hidden' : 'visible';
     cue.style.opacity = 1 - clamp01(p * 8);
-    clouds.forEach((c) => { c.style.transform = `translate3d(0, ${-p * c.speed * innerHeight}px, 0)`; });
+    const fade = 1 - clamp01((p - 0.6) / 0.12);
+    whiteout.style.visibility = heroVideo.style.visibility = fade > 0 ? 'visible' : 'hidden';
+    hero.querySelector('.hero__stage').style.opacity = fade;
     setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
   };
   ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', onUpdate: (st) => heroUpdate(st.progress) });
@@ -333,18 +324,7 @@ export function initJourney({ mobile }) {
       ScrollTrigger.getAll().forEach((st) => st.vars.onUpdate?.(st));
       if (houseST.isActive) world.setActive(false);
       world.snap();
-      // the film moves into the shader only once it is really playing, so it never flashes black
-      const takeFilm = () => {
-        world.setVideo(heroVideo);
-        filmOn = true;
-        // the DOM film steps aside (inline styles from the fallback path would keep it on top)
-        heroVideo.style.opacity = '0';
-        heroVideo.style.transform = '';
-        document.documentElement.classList.add('has-world');
-        heroUpdate(heroP);
-      };
-      if (!heroVideo.paused && heroVideo.readyState >= 3) takeFilm();
-      else heroVideo.addEventListener('playing', takeFilm, { once: true });
+      heroUpdate(heroP);
     },
   };
 }
