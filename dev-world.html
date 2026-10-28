@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;height:100%;background:#000}canvas{width:100vw;height:100vh;display:block}#k{position:fixed;left:8px;top:8px;color:#fff;font:12px monospace;background:#0008;padding:4px}</style></head>
+<body><canvas id="c"></canvas><div id="k"></div>
+<script type="module">
+import { createWorld } from './src/world/world.js';
+const w = window.w = await createWorld(document.getElementById('c'));
+const V = (a,b,c)=>[a,b,c];
+const shots = {
+  a: { pos:V(-3500,40,250), look:V(0,330,0), tod:0, night:0, fov:32 },
+  b: { pos:V(-2700,45,200), look:V(0,380,0), tod:1, night:0 },
+  c: { pos:V(-2060,60,120), look:V(-1890,10,40), tod:1.2, night:0 },
+  d: { pos:V(-900,330,-500), look:V(-5000,150,600), tod:2.2, night:0 },
+  e: { pos:V(-60,640,40), look:V(-3000,900,500), tod:2.6, night:1 },
+  f: { pos:V(-1200,180,-900), look:V(0,420,0), tod:1.6, night:0 },
+};
+window.shot = (k)=>{ const s=shots[k]; w.goal.pos.set(...s.pos); w.goal.look.set(...s.look); w.goal.tod=s.tod; w.goal.night=s.night; w.goal.fov=s.fov||50; w.snap(); document.getElementById('k').textContent=k; };
+shot(new URLSearchParams(location.search).get('s')||'a');
+</script></body></html>

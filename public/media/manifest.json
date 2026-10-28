@@ -1,0 +1,1264 @@
+[
+ {
+  "file": "pico-cover-pico-natural-wonders-LARGE",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/pico-cover-pico-natural-wonders-LARGE-800.webp",
+   "img/pico-cover-pico-natural-wonders-LARGE-1600.webp"
+  ],
+  "blur": "img/pico-cover-pico-natural-wonders-LARGE-24.webp",
+  "width": 5168,
+  "height": 2920,
+  "aspect": 1.7699,
+  "description": "cover pico natural wonders LARGE",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "pico-discover-03",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/pico-discover-03-800.webp",
+   "img/pico-discover-03-1600.webp"
+  ],
+  "blur": "img/pico-discover-03-24.webp",
+  "width": 2896,
+  "height": 1936,
+  "aspect": 1.4959,
+  "description": "discover",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "pico-discover-04",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/pico-discover-04-800.webp",
+   "img/pico-discover-04-1600.webp"
+  ],
+  "blur": "img/pico-discover-04-24.webp",
+  "width": 1782,
+  "height": 1200,
+  "aspect": 1.485,
+  "description": "discover",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "pico-discover-05",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/pico-discover-05-800.webp",
+   "img/pico-discover-05-1600.webp"
+  ],
+  "blur": "img/pico-discover-05-24.webp",
+  "width": 3872,
+  "height": 2592,
+  "aspect": 1.4938,
+  "description": "discover",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "pico-discover-06",
+  "widths": [
+   550
+  ],
+  "files": [
+   "img/pico-discover-06-800.webp"
+  ],
+  "blur": "img/pico-discover-06-24.webp",
+  "width": 550,
+  "height": 364,
+  "aspect": 1.511,
+  "description": "discover",
+  "category": "pico",
+  "lowRes": true
+ },
+ {
+  "file": "pico-discover-07",
+  "widths": [
+   800,
+   1024
+  ],
+  "files": [
+   "img/pico-discover-07-800.webp",
+   "img/pico-discover-07-1600.webp"
+  ],
+  "blur": "img/pico-discover-07-24.webp",
+  "width": 1024,
+  "height": 819,
+  "aspect": 1.2503,
+  "description": "discover",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "connect-firepit-flames-sparks",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/connect-firepit-flames-sparks-800.webp",
+   "img/connect-firepit-flames-sparks-1600.webp"
+  ],
+  "blur": "img/connect-firepit-flames-sparks-24.webp",
+  "width": 4480,
+  "height": 6720,
+  "aspect": 0.6667,
+  "description": "connect firepit flames sparks",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connect-karaoke-group",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/connect-karaoke-group-800.webp",
+   "img/connect-karaoke-group-1600.webp"
+  ],
+  "blur": "img/connect-karaoke-group-24.webp",
+  "width": 4000,
+  "height": 2670,
+  "aspect": 1.4981,
+  "description": "connect karaoke group",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connect-roadtrip-convertible",
+  "widths": [
+   800,
+   1536
+  ],
+  "files": [
+   "img/connect-roadtrip-convertible-800.webp",
+   "img/connect-roadtrip-convertible-1600.webp"
+  ],
+  "blur": "img/connect-roadtrip-convertible-24.webp",
+  "width": 1536,
+  "height": 2048,
+  "aspect": 0.75,
+  "description": "connect roadtrip convertible",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-01-dinner-table-food-night",
+  "widths": [
+   800,
+   1024
+  ],
+  "files": [
+   "img/connection-01-dinner-table-food-night-800.webp",
+   "img/connection-01-dinner-table-food-night-1600.webp"
+  ],
+  "blur": "img/connection-01-dinner-table-food-night-24.webp",
+  "width": 1024,
+  "height": 768,
+  "aspect": 1.3333,
+  "description": "connection dinner table food night",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-02-moon-through-trees",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/connection-02-moon-through-trees-800.webp",
+   "img/connection-02-moon-through-trees-1600.webp"
+  ],
+  "blur": "img/connection-02-moon-through-trees-24.webp",
+  "width": 2048,
+  "height": 2048,
+  "aspect": 1.0,
+  "description": "connection moon through trees",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-03-firepit-people",
+  "widths": [
+   800,
+   1552
+  ],
+  "files": [
+   "img/connection-03-firepit-people-800.webp",
+   "img/connection-03-firepit-people-1600.webp"
+  ],
+  "blur": "img/connection-03-firepit-people-24.webp",
+  "width": 1552,
+  "height": 2441,
+  "aspect": 0.6358,
+  "description": "connection firepit people",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-04-garden-lights-firepit-rotated",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/connection-04-garden-lights-firepit-rotated-800.webp",
+   "img/connection-04-garden-lights-firepit-rotated-1600.webp"
+  ],
+  "blur": "img/connection-04-garden-lights-firepit-rotated-24.webp",
+  "width": 3024,
+  "height": 4032,
+  "aspect": 0.75,
+  "description": "connection garden lights firepit rotated",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-05-guitar-player",
+  "widths": [
+   352
+  ],
+  "files": [
+   "img/connection-05-guitar-player-800.webp"
+  ],
+  "blur": "img/connection-05-guitar-player-24.webp",
+  "width": 352,
+  "height": 640,
+  "aspect": 0.55,
+  "description": "connection guitar player",
+  "category": "connection",
+  "lowRes": true
+ },
+ {
+  "file": "connection-06-cactus-lantern-night",
+  "widths": [
+   800,
+   1368
+  ],
+  "files": [
+   "img/connection-06-cactus-lantern-night-800.webp",
+   "img/connection-06-cactus-lantern-night-1600.webp"
+  ],
+  "blur": "img/connection-06-cactus-lantern-night-24.webp",
+  "width": 1368,
+  "height": 1824,
+  "aspect": 0.75,
+  "description": "connection cactus lantern night",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "connection-07-dark-firepit",
+  "widths": [
+   480
+  ],
+  "files": [
+   "img/connection-07-dark-firepit-800.webp"
+  ],
+  "blur": "img/connection-07-dark-firepit-24.webp",
+  "width": 480,
+  "height": 848,
+  "aspect": 0.566,
+  "description": "connection dark firepit",
+  "category": "connection",
+  "lowRes": true
+ },
+ {
+  "file": "connection-08-firepit-bench-rotated",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/connection-08-firepit-bench-rotated-800.webp",
+   "img/connection-08-firepit-bench-rotated-1600.webp"
+  ],
+  "blur": "img/connection-08-firepit-bench-rotated-24.webp",
+  "width": 3024,
+  "height": 4032,
+  "aspect": 0.75,
+  "description": "connection firepit bench rotated",
+  "category": "connection",
+  "lowRes": false
+ },
+ {
+  "file": "contact-pico-mountain-palm",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/contact-pico-mountain-palm-800.webp",
+   "img/contact-pico-mountain-palm-1600.webp"
+  ],
+  "blur": "img/contact-pico-mountain-palm-24.webp",
+  "width": 4032,
+  "height": 3024,
+  "aspect": 1.3333,
+  "description": "contact pico mountain palm",
+  "category": "view",
+  "lowRes": false
+ },
+ {
+  "file": "coworking-01-desks-windows",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/coworking-01-desks-windows-800.webp",
+   "img/coworking-01-desks-windows-1600.webp"
+  ],
+  "blur": "img/coworking-01-desks-windows-24.webp",
+  "width": 2000,
+  "height": 1125,
+  "aspect": 1.7778,
+  "description": "coworking desks windows",
+  "category": "area-coworking",
+  "lowRes": false
+ },
+ {
+  "file": "coworking-02-desk-chair-palms",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/coworking-02-desk-chair-palms-800.webp",
+   "img/coworking-02-desk-chair-palms-1600.webp"
+  ],
+  "blur": "img/coworking-02-desk-chair-palms-24.webp",
+  "width": 3000,
+  "height": 4000,
+  "aspect": 0.75,
+  "description": "coworking desk chair palms",
+  "category": "area-coworking",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-01-long-table-group-lights",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/dinners-01-long-table-group-lights-800.webp",
+   "img/dinners-01-long-table-group-lights-1600.webp"
+  ],
+  "blur": "img/dinners-01-long-table-group-lights-24.webp",
+  "width": 1600,
+  "height": 1200,
+  "aspect": 1.3333,
+  "description": "dinners long table group lights",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-02-long-table-group-kids",
+  "widths": [
+   800,
+   1200
+  ],
+  "files": [
+   "img/dinners-02-long-table-group-kids-800.webp",
+   "img/dinners-02-long-table-group-kids-1600.webp"
+  ],
+  "blur": "img/dinners-02-long-table-group-kids-24.webp",
+  "width": 1200,
+  "height": 1374,
+  "aspect": 0.8734,
+  "description": "dinners long table group kids",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-03-cook-in-garden",
+  "widths": [
+   800,
+   1200
+  ],
+  "files": [
+   "img/dinners-03-cook-in-garden-800.webp",
+   "img/dinners-03-cook-in-garden-1600.webp"
+  ],
+  "blur": "img/dinners-03-cook-in-garden-24.webp",
+  "width": 1200,
+  "height": 1600,
+  "aspect": 0.75,
+  "description": "dinners cook in garden",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-04-table-from-above",
+  "widths": [
+   800,
+   1200
+  ],
+  "files": [
+   "img/dinners-04-table-from-above-800.webp",
+   "img/dinners-04-table-from-above-1600.webp"
+  ],
+  "blur": "img/dinners-04-table-from-above-24.webp",
+  "width": 1200,
+  "height": 1600,
+  "aspect": 0.75,
+  "description": "dinners table from above",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-05-meatballs-flatbread",
+  "widths": [
+   800,
+   1200
+  ],
+  "files": [
+   "img/dinners-05-meatballs-flatbread-800.webp",
+   "img/dinners-05-meatballs-flatbread-1600.webp"
+  ],
+  "blur": "img/dinners-05-meatballs-flatbread-24.webp",
+  "width": 1200,
+  "height": 1600,
+  "aspect": 0.75,
+  "description": "dinners meatballs flatbread",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-06-salad-plates",
+  "widths": [
+   480
+  ],
+  "files": [
+   "img/dinners-06-salad-plates-800.webp"
+  ],
+  "blur": "img/dinners-06-salad-plates-24.webp",
+  "width": 480,
+  "height": 848,
+  "aspect": 0.566,
+  "description": "dinners salad plates",
+  "category": "dinners",
+  "lowRes": true
+ },
+ {
+  "file": "dinners-07-sushi-platter-trio",
+  "widths": [
+   800,
+   1024
+  ],
+  "files": [
+   "img/dinners-07-sushi-platter-trio-800.webp",
+   "img/dinners-07-sushi-platter-trio-1600.webp"
+  ],
+  "blur": "img/dinners-07-sushi-platter-trio-24.webp",
+  "width": 1024,
+  "height": 768,
+  "aspect": 1.3333,
+  "description": "dinners sushi platter trio",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dinners-08-night-table",
+  "widths": [
+   800,
+   1080
+  ],
+  "files": [
+   "img/dinners-08-night-table-800.webp",
+   "img/dinners-08-night-table-1600.webp"
+  ],
+  "blur": "img/dinners-08-night-table-24.webp",
+  "width": 1080,
+  "height": 1810,
+  "aspect": 0.5967,
+  "description": "dinners night table",
+  "category": "dinners",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-bathroom-01",
+  "widths": [
+   800,
+   1506
+  ],
+  "files": [
+   "img/dorm-bathroom-01-800.webp",
+   "img/dorm-bathroom-01-1600.webp"
+  ],
+  "blur": "img/dorm-bathroom-01-24.webp",
+  "width": 1506,
+  "height": 2000,
+  "aspect": 0.753,
+  "description": "dorm bathroom",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-bunk-closeup-curtain-01",
+  "widths": [
+   800,
+   1333
+  ],
+  "files": [
+   "img/dorm-bunk-closeup-curtain-01-800.webp",
+   "img/dorm-bunk-closeup-curtain-01-1600.webp"
+  ],
+  "blur": "img/dorm-bunk-closeup-curtain-01-24.webp",
+  "width": 1333,
+  "height": 2000,
+  "aspect": 0.6665,
+  "description": "dorm bunk closeup curtain",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-poets-01-bunks-hammock",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/dorm-poets-01-bunks-hammock-800.webp",
+   "img/dorm-poets-01-bunks-hammock-1600.webp"
+  ],
+  "blur": "img/dorm-poets-01-bunks-hammock-24.webp",
+  "width": 2000,
+  "height": 1333,
+  "aspect": 1.5004,
+  "description": "dorm poets bunks hammock",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-poets-02-bookshelf",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/dorm-poets-02-bookshelf-800.webp",
+   "img/dorm-poets-02-bookshelf-1600.webp"
+  ],
+  "blur": "img/dorm-poets-02-bookshelf-24.webp",
+  "width": 2000,
+  "height": 1333,
+  "aspect": 1.5004,
+  "description": "dorm poets bookshelf",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-poets-03-lockers-wide",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/dorm-poets-03-lockers-wide-800.webp",
+   "img/dorm-poets-03-lockers-wide-1600.webp"
+  ],
+  "blur": "img/dorm-poets-03-lockers-wide-24.webp",
+  "width": 1600,
+  "height": 1200,
+  "aspect": 1.3333,
+  "description": "dorm poets lockers wide",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "dorm-sculptors-01-bunks-shelf",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/dorm-sculptors-01-bunks-shelf-800.webp",
+   "img/dorm-sculptors-01-bunks-shelf-1600.webp"
+  ],
+  "blur": "img/dorm-sculptors-01-bunks-shelf-24.webp",
+  "width": 2000,
+  "height": 1506,
+  "aspect": 1.328,
+  "description": "dorm sculptors bunks shelf",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "greenhouse-01-interior-vertical",
+  "widths": [
+   800,
+   1125
+  ],
+  "files": [
+   "img/greenhouse-01-interior-vertical-800.webp",
+   "img/greenhouse-01-interior-vertical-1600.webp"
+  ],
+  "blur": "img/greenhouse-01-interior-vertical-24.webp",
+  "width": 1125,
+  "height": 2000,
+  "aspect": 0.5625,
+  "description": "greenhouse interior vertical",
+  "category": "area-greenhouse",
+  "lowRes": false
+ },
+ {
+  "file": "greenhouse-02-interior-wide",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/greenhouse-02-interior-wide-800.webp",
+   "img/greenhouse-02-interior-wide-1600.webp"
+  ],
+  "blur": "img/greenhouse-02-interior-wide-24.webp",
+  "width": 2000,
+  "height": 1500,
+  "aspect": 1.3333,
+  "description": "greenhouse interior wide",
+  "category": "area-greenhouse",
+  "lowRes": false
+ },
+ {
+  "file": "home-dorm-bunks-hammock",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-dorm-bunks-hammock-800.webp",
+   "img/home-dorm-bunks-hammock-1600.webp"
+  ],
+  "blur": "img/home-dorm-bunks-hammock-24.webp",
+  "width": 4063,
+  "height": 2709,
+  "aspect": 1.4998,
+  "description": "home dorm bunks hammock",
+  "category": "area-dorm",
+  "lowRes": false
+ },
+ {
+  "file": "home-firepit-night-people-glow",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-firepit-night-people-glow-800.webp",
+   "img/home-firepit-night-people-glow-1600.webp"
+  ],
+  "blur": "img/home-firepit-night-people-glow-24.webp",
+  "width": 2940,
+  "height": 1912,
+  "aspect": 1.5377,
+  "description": "home firepit night people glow",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "home-hero-video-poster-drone",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-hero-video-poster-drone-800.webp",
+   "img/home-hero-video-poster-drone-1600.webp"
+  ],
+  "blur": "img/home-hero-video-poster-drone-24.webp",
+  "width": 1920,
+  "height": 960,
+  "aspect": 2.0,
+  "description": "home hero video poster drone",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "home-hikers-vineyard-walls-pico",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-hikers-vineyard-walls-pico-800.webp",
+   "img/home-hikers-vineyard-walls-pico-1600.webp"
+  ],
+  "blur": "img/home-hikers-vineyard-walls-pico-24.webp",
+  "width": 2250,
+  "height": 2003,
+  "aspect": 1.1233,
+  "description": "home hikers vineyard walls pico",
+  "category": "pico",
+  "lowRes": false
+ },
+ {
+  "file": "home-house-exterior-pico-mountain-guests",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-house-exterior-pico-mountain-guests-800.webp",
+   "img/home-house-exterior-pico-mountain-guests-1600.webp"
+  ],
+  "blur": "img/home-house-exterior-pico-mountain-guests-24.webp",
+  "width": 1600,
+  "height": 1067,
+  "aspect": 1.4995,
+  "description": "home house exterior pico mountain guests",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "home-private-room-yellow-bed-pico-view",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/home-private-room-yellow-bed-pico-view-800.webp",
+   "img/home-private-room-yellow-bed-pico-view-1600.webp"
+  ],
+  "blur": "img/home-private-room-yellow-bed-pico-view-24.webp",
+  "width": 4080,
+  "height": 3072,
+  "aspect": 1.3281,
+  "description": "home private room yellow bed pico view",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "kitchen-01-shared-kitchen",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/kitchen-01-shared-kitchen-800.webp",
+   "img/kitchen-01-shared-kitchen-1600.webp"
+  ],
+  "blur": "img/kitchen-01-shared-kitchen-24.webp",
+  "width": 2046,
+  "height": 1151,
+  "aspect": 1.7776,
+  "description": "kitchen shared kitchen",
+  "category": "area-kitchen",
+  "lowRes": false
+ },
+ {
+  "file": "kitchen-02-dining-lounge",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/kitchen-02-dining-lounge-800.webp",
+   "img/kitchen-02-dining-lounge-1600.webp"
+  ],
+  "blur": "img/kitchen-02-dining-lounge-24.webp",
+  "width": 2046,
+  "height": 1151,
+  "aspect": 1.7776,
+  "description": "kitchen dining lounge",
+  "category": "area-kitchen",
+  "lowRes": false
+ },
+ {
+  "file": "property-01-garden-house-street-view",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-01-garden-house-street-view-800.webp",
+   "img/property-01-garden-house-street-view-1600.webp"
+  ],
+  "blur": "img/property-01-garden-house-street-view-24.webp",
+  "width": 2000,
+  "height": 1506,
+  "aspect": 1.328,
+  "description": "property garden house street view",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-02-house-facade-white-terrace",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-02-house-facade-white-terrace-800.webp",
+   "img/property-02-house-facade-white-terrace-1600.webp"
+  ],
+  "blur": "img/property-02-house-facade-white-terrace-24.webp",
+  "width": 2046,
+  "height": 1151,
+  "aspect": 1.7776,
+  "description": "property house facade white terrace",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-03-driveway-white-wall",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-03-driveway-white-wall-800.webp",
+   "img/property-03-driveway-white-wall-1600.webp"
+  ],
+  "blur": "img/property-03-driveway-white-wall-24.webp",
+  "width": 3000,
+  "height": 4000,
+  "aspect": 0.75,
+  "description": "property driveway white wall",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-04-flowers-house-corner",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-04-flowers-house-corner-800.webp",
+   "img/property-04-flowers-house-corner-1600.webp"
+  ],
+  "blur": "img/property-04-flowers-house-corner-24.webp",
+  "width": 3000,
+  "height": 4000,
+  "aspect": 0.75,
+  "description": "property flowers house corner",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-05-terrace-armchairs-entrance",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-05-terrace-armchairs-entrance-800.webp",
+   "img/property-05-terrace-armchairs-entrance-1600.webp"
+  ],
+  "blur": "img/property-05-terrace-armchairs-entrance-24.webp",
+  "width": 2046,
+  "height": 1541,
+  "aspect": 1.3277,
+  "description": "property terrace armchairs entrance",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-06-garden-lawn-hydrangea-path",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-06-garden-lawn-hydrangea-path-800.webp",
+   "img/property-06-garden-lawn-hydrangea-path-1600.webp"
+  ],
+  "blur": "img/property-06-garden-lawn-hydrangea-path-24.webp",
+  "width": 4000,
+  "height": 3000,
+  "aspect": 1.3333,
+  "description": "property garden lawn hydrangea path",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-07-garden-swing-aloe",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-07-garden-swing-aloe-800.webp",
+   "img/property-07-garden-swing-aloe-1600.webp"
+  ],
+  "blur": "img/property-07-garden-swing-aloe-24.webp",
+  "width": 3737,
+  "height": 2803,
+  "aspect": 1.3332,
+  "description": "property garden swing aloe",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-08-garden-red-chairs-dragon-tree",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-08-garden-red-chairs-dragon-tree-800.webp",
+   "img/property-08-garden-red-chairs-dragon-tree-1600.webp"
+  ],
+  "blur": "img/property-08-garden-red-chairs-dragon-tree-24.webp",
+  "width": 3655,
+  "height": 2741,
+  "aspect": 1.3335,
+  "description": "property garden red chairs dragon tree",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-09-garden-cat-path",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-09-garden-cat-path-800.webp",
+   "img/property-09-garden-cat-path-1600.webp"
+  ],
+  "blur": "img/property-09-garden-cat-path-24.webp",
+  "width": 2046,
+  "height": 1151,
+  "aspect": 1.7776,
+  "description": "property garden cat path",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-10-house-corner-cat",
+  "widths": [
+   800,
+   1541
+  ],
+  "files": [
+   "img/property-10-house-corner-cat-800.webp",
+   "img/property-10-house-corner-cat-1600.webp"
+  ],
+  "blur": "img/property-10-house-corner-cat-24.webp",
+  "width": 1541,
+  "height": 2046,
+  "aspect": 0.7532,
+  "description": "property house corner cat",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-11-garden-green-gate-flowers",
+  "widths": [
+   800,
+   1500
+  ],
+  "files": [
+   "img/property-11-garden-green-gate-flowers-800.webp",
+   "img/property-11-garden-green-gate-flowers-1600.webp"
+  ],
+  "blur": "img/property-11-garden-green-gate-flowers-24.webp",
+  "width": 1500,
+  "height": 2000,
+  "aspect": 0.75,
+  "description": "property garden green gate flowers",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-12-wall-painting-person-doorway",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-12-wall-painting-person-doorway-800.webp",
+   "img/property-12-wall-painting-person-doorway-1600.webp"
+  ],
+  "blur": "img/property-12-wall-painting-person-doorway-24.webp",
+  "width": 2046,
+  "height": 1541,
+  "aspect": 1.3277,
+  "description": "property wall painting person doorway",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-13-tiles-corner-detail",
+  "widths": [
+   800,
+   1500
+  ],
+  "files": [
+   "img/property-13-tiles-corner-detail-800.webp",
+   "img/property-13-tiles-corner-detail-1600.webp"
+  ],
+  "blur": "img/property-13-tiles-corner-detail-24.webp",
+  "width": 1500,
+  "height": 2000,
+  "aspect": 0.75,
+  "description": "property tiles corner detail",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-14-garden-hammock-trees",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-14-garden-hammock-trees-800.webp",
+   "img/property-14-garden-hammock-trees-1600.webp"
+  ],
+  "blur": "img/property-14-garden-hammock-trees-24.webp",
+  "width": 2000,
+  "height": 1500,
+  "aspect": 1.3333,
+  "description": "property garden hammock trees",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "property-15-sunset-pico-over-rooftops",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/property-15-sunset-pico-over-rooftops-800.webp",
+   "img/property-15-sunset-pico-over-rooftops-1600.webp"
+  ],
+  "blur": "img/property-15-sunset-pico-over-rooftops-24.webp",
+  "width": 2046,
+  "height": 1364,
+  "aspect": 1.5,
+  "description": "property sunset pico over rooftops",
+  "category": "area-property",
+  "lowRes": false
+ },
+ {
+  "file": "room-bathroom-garden-door",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/room-bathroom-garden-door-800.webp",
+   "img/room-bathroom-garden-door-1600.webp"
+  ],
+  "blur": "img/room-bathroom-garden-door-24.webp",
+  "width": 4000,
+  "height": 3000,
+  "aspect": 1.3333,
+  "description": "room bathroom garden door",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "room-bathroom-pico-view-window",
+  "widths": [
+   800,
+   1506
+  ],
+  "files": [
+   "img/room-bathroom-pico-view-window-800.webp",
+   "img/room-bathroom-pico-view-window-1600.webp"
+  ],
+  "blur": "img/room-bathroom-pico-view-window-24.webp",
+  "width": 1506,
+  "height": 2000,
+  "aspect": 0.753,
+  "description": "room bathroom pico view window",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "room-desk-by-window",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/room-desk-by-window-800.webp",
+   "img/room-desk-by-window-1600.webp"
+  ],
+  "blur": "img/room-desk-by-window-24.webp",
+  "width": 2046,
+  "height": 1541,
+  "aspect": 1.3277,
+  "description": "room desk by window",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "room-musicians-01-bed-records-shelf",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/room-musicians-01-bed-records-shelf-800.webp",
+   "img/room-musicians-01-bed-records-shelf-1600.webp"
+  ],
+  "blur": "img/room-musicians-01-bed-records-shelf-24.webp",
+  "width": 2046,
+  "height": 1151,
+  "aspect": 1.7776,
+  "description": "room musicians bed records shelf",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "room-photographers-01-sunset-windows",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/room-photographers-01-sunset-windows-800.webp",
+   "img/room-photographers-01-sunset-windows-1600.webp"
+  ],
+  "blur": "img/room-photographers-01-sunset-windows-24.webp",
+  "width": 4080,
+  "height": 3072,
+  "aspect": 1.3281,
+  "description": "room photographers sunset windows",
+  "category": "area-room",
+  "lowRes": false
+ },
+ {
+  "file": "theatre-01-lounge-cushions-projector",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/theatre-01-lounge-cushions-projector-800.webp",
+   "img/theatre-01-lounge-cushions-projector-1600.webp"
+  ],
+  "blur": "img/theatre-01-lounge-cushions-projector-24.webp",
+  "width": 2046,
+  "height": 1364,
+  "aspect": 1.5,
+  "description": "theatre lounge cushions projector",
+  "category": "area-theatre",
+  "lowRes": false
+ },
+ {
+  "file": "theatre-02-mural-painting",
+  "widths": [
+   800,
+   1541
+  ],
+  "files": [
+   "img/theatre-02-mural-painting-800.webp",
+   "img/theatre-02-mural-painting-1600.webp"
+  ],
+  "blur": "img/theatre-02-mural-painting-24.webp",
+  "width": 1541,
+  "height": 2046,
+  "aspect": 0.7532,
+  "description": "theatre mural painting",
+  "category": "area-theatre",
+  "lowRes": false
+ },
+ {
+  "file": "view-pico-mountain-sunset-over-madalena-roofs",
+  "widths": [
+   800,
+   1600
+  ],
+  "files": [
+   "img/view-pico-mountain-sunset-over-madalena-roofs-800.webp",
+   "img/view-pico-mountain-sunset-over-madalena-roofs-1600.webp"
+  ],
+  "blur": "img/view-pico-mountain-sunset-over-madalena-roofs-24.webp",
+  "width": 2000,
+  "height": 1125,
+  "aspect": 1.7778,
+  "description": "view pico mountain sunset over madalena roofs",
+  "category": "view",
+  "lowRes": false
+ },
+ {
+  "file": "hero-drone",
+  "widths": [
+   854
+  ],
+  "files": [
+   "video/hero-drone.mp4"
+  ],
+  "poster": "video/hero-drone.webp",
+  "width": 854,
+  "height": 428,
+  "aspect": 1.9953,
+  "duration": 13.5,
+  "description": "Aerial drone fly-over of the red-roofed hostel house, garden and Madalena village at sunset, 13.5 s loop",
+  "category": "video"
+ },
+ {
+  "file": "connection-a",
+  "widths": [
+   352
+  ],
+  "files": [
+   "video/connection-a.mp4"
+  ],
+  "poster": "video/connection-a.webp",
+  "width": 352,
+  "height": 640,
+  "aspect": 0.55,
+  "duration": 3.0,
+  "description": "Short portrait clip of firepit / connection moment, 3 s",
+  "category": "video"
+ },
+ {
+  "file": "connection-b",
+  "widths": [
+   480
+  ],
+  "files": [
+   "video/connection-b.mp4"
+  ],
+  "poster": "video/connection-b.webp",
+  "width": 480,
+  "height": 848,
+  "aspect": 0.566,
+  "duration": 11.5,
+  "description": "Portrait clip of firepit night connection, 11.5 s",
+  "category": "video"
+ },
+ {
+  "file": "dinners",
+  "widths": [
+   480
+  ],
+  "files": [
+   "video/dinners.mp4"
+  ],
+  "poster": "video/dinners.webp",
+  "width": 480,
+  "height": 848,
+  "aspect": 0.566,
+  "duration": 7.3,
+  "description": "Portrait clip of a communal loving dinner, 7.3 s",
+  "category": "video"
+ }
+]
