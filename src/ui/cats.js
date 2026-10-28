@@ -134,7 +134,7 @@ export function initCats({ audio, mobile }) {
     ctx.restore();
   }
 
-  let last = performance.now();
+  let last = performance.now(), side = -1;
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
@@ -142,26 +142,28 @@ export function initCats({ audio, mobile }) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
+    // The line of cats keeps to one side of the cursor and only swaps sides once the cursor has
+    // clearly crossed over. (Tying the target to each cat's own facing made it flip forever.)
+    const lead = cats[0];
+    if (lead.x < mouse.x - 30) side = -1;
+    else if (lead.x > mouse.x + 30) side = 1;
+
     cats.forEach((c, i) => {
-      let tx, ty;
-      if (i === 0) {
-        tx = mouse.x - c.face * 46 * scale;
-        ty = fine ? mouse.y + 34 * scale : H - 16;
-      } else {
-        const lead = cats[i - 1];
-        tx = lead.x - lead.face * 58 * scale;
-        ty = fine ? lead.y + 6 : H - 16;
-      }
+      const tx = mouse.x + side * (46 + 58 * i) * scale;
+      const ty = fine ? mouse.y + (34 + i * 5) * scale : H - 16;
       const dx = tx - c.x, dy = ty - c.y;
       const dist = Math.hypot(dx, dy);
       const max = (fine ? 420 : 120) * (1 - i * 0.06);
-      const want = dist > 4 ? Math.min(max, dist * 3.2) : 0;
+      // a small dead zone so a resting cat stops instead of hunting back and forth
+      const want = dist > 8 ? Math.min(max, (dist - 8) * 3.2) : 0;
       const k = 1 - Math.exp(-dt * 7);
       c.vx += ((dist ? dx / dist : 0) * want - c.vx) * k;
       c.vy += ((dist ? dy / dist : 0) * want - c.vy) * k;
       c.x += c.vx * dt; c.y += c.vy * dt;
       c.speed = Math.hypot(c.vx, c.vy);
-      if (Math.abs(c.vx) > 14) c.face = Math.sign(c.vx);
+      // walking: face where you go; resting: look at the cursor
+      if (c.speed > 40 && Math.abs(c.vx) > 30) c.face = Math.sign(c.vx);
+      else if (c.speed < 22 && fine) c.face = -side;
       c.phase += c.speed * dt * 0.11;
       if (c.speed > 22) { c.still = 0; c.state = 'walk'; } else {
         c.still += dt;
@@ -198,5 +200,6 @@ export function initCats({ audio, mobile }) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  if (import.meta.env.DEV) window.__cats = cats;
   return { wake() {} };
 }
