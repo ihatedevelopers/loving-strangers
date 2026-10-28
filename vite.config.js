@@ -13,10 +13,8 @@ function pictures() {
         if (!m) throw new Error(`unknown picture: ${name}`);
         const sizes = /sizes=/.test(rest) ? '' : ' sizes="(max-width: 760px) 92vw, 50vw"';
         const eager = /loading=/.test(rest) ? '' : ' loading="lazy"';
-        // small originals were saved under the -800 name at their true width
-        const set = m.lowRes
-          ? `media/img/${name}-800.webp ${m.widths[0]}w`
-          : m.widths.map((w) => `media/img/${name}-${w}.webp ${w}w`).join(', ');
+        // files are named by size slot (-800, -1600); widths holds each file's true pixel width
+        const set = m.widths.map((w, i) => `media/img/${name}-${[800, 1600][i]}.webp ${w}w`).join(', ');
         const w = 800, h = Math.round(800 / m.aspect);
         return `<img src="media/img/${name}-800.webp" srcset="${set}"${sizes} width="${w}" height="${h}" decoding="async"${eager}${rest}>`;
       });
@@ -24,9 +22,22 @@ function pictures() {
   };
 }
 
+// <i data-icon="bed"></i> becomes an inline Phosphor icon (MIT licence), so icons cost no requests
+function icons() {
+  return {
+    name: 'icons',
+    transformIndexHtml(html) {
+      return html.replace(/<i data-icon="([a-z-]+)"><\/i>/g, (_, name) => {
+        const svg = readFileSync(new URL(`./node_modules/@phosphor-icons/core/assets/regular/${name}.svg`, import.meta.url), 'utf8');
+        return svg.replace('<svg ', '<svg class="ico" aria-hidden="true" focusable="false" ');
+      });
+    },
+  };
+}
+
 export default defineConfig({
   base: './',
-  plugins: [pictures()],
+  plugins: [pictures(), icons()],
   server: { port: 5180 },
   build: { target: 'es2020', assetsInlineLimit: 0, chunkSizeWarningLimit: 900 },
 });

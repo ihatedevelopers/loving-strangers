@@ -286,7 +286,16 @@ ${NOISE}
 uniform sampler2D tCol; uniform sampler2D tDepth;
 uniform vec2 uRes; uniform float uTime; uniform float uNear; uniform float uFar; uniform float uPx; uniform float uNight;
 uniform vec3 pPaper, pShade, pInk, pYel, nPaper, nShade, nInk, nYel;
+uniform sampler2D tVideo; uniform float uVideo, uSketch, uVideoGone, uVideoZoom, uVideoAspect;
 varying vec2 vUv;
+float lum(vec3 c){ return dot(c, vec3(.299, .587, .114)); }
+// the opening film, cover-fitted and zoomed
+vec2 videoUv(vec2 uv){
+  vec2 q = uv - .5;
+  float a = uRes.x / uRes.y;
+  if (a > uVideoAspect) q.y *= uVideoAspect / a; else q.x *= a / uVideoAspect;
+  return q / uVideoZoom + .5;
+}
 float invDepth(vec2 uv){
   float z = texture2D(tDepth, uv).x * 2. - 1.;
   return (uFar + uNear - z * (uFar - uNear)) / (2. * uNear * uFar);
@@ -318,6 +327,31 @@ void main(){
 
   float grain = (vnoise(vUv * uRes / (2.2 * uPx)) - .5) * .045 + (hash12(vUv * uRes) - .5) * .03;
   float fibre = (vnoise(vec2(asp.x * 9., asp.y * 140.)) - .5) * .018;
+  // the film: photo -> its own ink sketch -> dissolves into the drawn island
+  if (uVideo > .001) {
+    vec2 vu = videoUv(vUv);
+    vec3 photo = texture2D(tVideo, vu).rgb;
+    vec3 film = photo;
+    if (uSketch > .001) {
+      vec2 su = videoUv(uv);
+      vec2 tx = 1.6 * uPx / uRes / uVideoZoom;
+      float l = lum(texture2D(tVideo, su).rgb);
+      float gx = lum(texture2D(tVideo, su + vec2(tx.x, 0.)).rgb) - lum(texture2D(tVideo, su - vec2(tx.x, 0.)).rgb);
+      float gy = lum(texture2D(tVideo, su + vec2(0., tx.y)).rgb) - lum(texture2D(tVideo, su - vec2(0., tx.y)).rgb);
+      float lines = smoothstep(.07, .2, length(vec2(gx, gy)));
+      vec2 sp = gl_FragCoord.xy / uPx;
+      float hatch = (1. - smoothstep(.3, 1., abs(fract((sp.x + sp.y) / 5.5) - .5) * 5.5)) * smoothstep(.42, .18, l);
+      vec3 c = texture2D(tVideo, su).rgb;
+      float warm = smoothstep(.06, .2, c.r - c.b) * smoothstep(.35, .6, l);
+      vec3 sketch = mix(mix(pShade, pPaper, smoothstep(.15, .6, l)), pYel, warm * .9);
+      sketch = mix(sketch, pInk, max(lines, hatch * .8));
+      film = mix(photo, sketch, uSketch);
+    }
+    float b = fbm(asp * 3. + 7.) * .7 + length(vUv - .5) * .55;
+    float gone = smoothstep(b - .05, b + .05, uVideoGone * 1.35 - .12);
+    col = mix(col, film, uVideo * (1. - gone));
+  }
+
   col *= 1. + grain + fibre;
   col *= mix(1., .88, smoothstep(.5, 1.2, length(vUv - .5) * 1.5));
   gl_FragColor = vec4(col, 1.);
@@ -470,6 +504,7 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     uNear: { value: camera.near }, uFar: { value: camera.far },
     pPaper: { value: new THREE.Vector3() }, pShade: { value: new THREE.Vector3() }, pInk: { value: new THREE.Vector3() }, pYel: { value: new THREE.Vector3() },
     nPaper: { value: NIGHT.paper }, nShade: { value: NIGHT.shade }, nInk: { value: NIGHT.ink }, nYel: { value: NIGHT.yel },
+    tVideo: { value: null }, uVideo: { value: 0 }, uSketch: { value: 0 }, uVideoGone: { value: 0 }, uVideoZoom: { value: 1 }, uVideoAspect: { value: 16 / 9 },
   };
   const postScene = new THREE.Scene();
   const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -511,13 +546,12 @@ export async function createWorld(canvas, { mobile = false } = {}) {
   window.addEventListener('resize', resize);
 
   let raf = 0, last = performance.now(), onFrame = null, odd = false;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function frame(now) {
     raf = 0;
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
-    uniforms.uTime.value += reduced ? 0 : dt;
+    uniforms.uTime.value += dt;
     const k = 1 - Math.exp(-dt * 3.2);
     cur.pos.lerp(goal.pos, k);
     cur.look.lerp(goal.look, k);
@@ -590,6 +624,18 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     setActive(v) { active = v; if (v) start(); },
     setPointer(x, y) { pointer.set(x, y); },
     setWhale(v) { if (v && !whaleOn) whaleT = 0; whaleOn = v; },
+    // the opening film plays inside the post pass so it can turn into ink
+    setVideo(el) {
+      const tex = new THREE.VideoTexture(el);
+      tex.minFilter = THREE.LinearFilter;
+      tex.generateMipmaps = false;
+      postUniforms.tVideo.value = tex;
+      const aspect = () => { if (el.videoWidth) postUniforms.uVideoAspect.value = el.videoWidth / el.videoHeight; };
+      aspect();
+      el.addEventListener('loadedmetadata', aspect);
+      postUniforms.uVideo.value = 1;
+    },
+    film: { get zoom() { return postUniforms.uVideoZoom.value; }, set zoom(v) { postUniforms.uVideoZoom.value = v; }, get sketch() { return postUniforms.uSketch.value; }, set sketch(v) { postUniforms.uSketch.value = v; }, get gone() { return postUniforms.uVideoGone.value; }, set gone(v) { postUniforms.uVideoGone.value = v; postUniforms.uVideo.value = postUniforms.tVideo.value && v < 1 ? 1 : 0; } },
     onFrame(fn) { onFrame = fn; },
     // world point to CSS pixels (null when behind the camera)
     project(v, out = { x: 0, y: 0, visible: false }) {

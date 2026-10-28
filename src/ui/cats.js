@@ -11,7 +11,6 @@ const CATS = [
 export function initCats({ audio, mobile }) {
   const canvas = document.getElementById('cats');
   const ctx = canvas.getContext('2d');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = window.matchMedia('(pointer: fine)').matches;
   let dpr = 1, W = 0, H = 0;
   const resize = () => {
@@ -34,11 +33,11 @@ export function initCats({ audio, mobile }) {
   const hearts = [];
 
   if (fine) {
-    if (!reduced) document.documentElement.classList.add('has-cats');
+    document.documentElement.classList.add('has-cats');
     addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse') return;
       mouse.x = e.clientX; mouse.y = e.clientY; mouse.inside = true;
-      mouse.hoverGoal = e.target.closest?.('a, button, [data-card], [data-stub], [data-clay], [data-record], [data-develop]') ? 1 : 0;
+      mouse.hoverGoal = e.target.closest?.('a, button, [data-cursor], [data-stub], [data-clay], [data-record], [data-develop]') ? 1 : 0;
     }, { passive: true });
     document.addEventListener('pointerleave', () => { mouse.inside = false; });
     addEventListener('pointerdown', () => {
@@ -198,6 +197,6 @@ export function initCats({ audio, mobile }) {
     }
     requestAnimationFrame(frame);
   }
-  if (!reduced) requestAnimationFrame(frame);
+  requestAnimationFrame(frame);
   return { wake() {} };
 }

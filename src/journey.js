@@ -17,11 +17,51 @@ const keys = (arr, t) => {
 
 // 1 · the ferry from Faial, then the harbour, then the mountain
 const ARRIVAL = {
-  pos: path([V(-4300, 34, 520), V(-3400, 60, 320), V(-2500, 92, 170), V(-2420, 150, 210), V(-2250, 105, 150)]),
-  look: path([V(0, 330, 0), V(0, 350, 0), V(-1890, 10, 40), V(-700, 310, 0), V(-900, 270, 0)]),
-  fov: [28, 34, 40, 40, 44],
-  tod: [0, 0.5, 0.9, 1, 1.1],
+  pos: path([V(-4300, 34, 520), V(-3400, 60, 320), V(-2650, 95, 220), V(-2190, 80, 130)]),
+  look: path([V(0, 330, 0), V(0, 350, 0), V(-1890, 10, 40), V(-1900, 4, 40)]),
+  fov: [28, 34, 40, 44],
+  tod: [0, 0.45, 0.85, 1],
 };
+
+// ink-outlined clouds (like the tile's) that rush past the camera over the opening film
+function makeClouds(host) {
+  const specs = [
+    { w: 30, x: -6, speed: 1.9 }, { w: 22, x: 66, speed: 2.5 }, { w: 36, x: 32, speed: 1.6 }, { w: 18, x: 12, speed: 2.9 }, { w: 26, x: 78, speed: 2.1 },
+  ];
+  return specs.map((c, k) => {
+    const circles = [[38, 78, 30], [82, 58, 42], [134, 50, 50], [186, 62, 40], [228, 80, 28]].map(([x, y, r]) => [x, y + ((k * 7 + x) % 9) - 4, r]);
+    const ring = (d) => circles.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r - d}"/>`).join('');
+    const el = document.createElement('div');
+    el.className = 'hero__cloud';
+    el.style.setProperty('--w', `${c.w}vw`);
+    el.style.setProperty('--x', `${c.x}vw`);
+    el.innerHTML = `<svg viewBox="0 0 270 104"><defs><clipPath id="cl${k}"><rect width="270" height="92"/></clipPath></defs>
+      <g clip-path="url(#cl${k})"><g fill="#25261f">${ring(-3)}</g><g fill="#fffdf6">${ring(0)}</g></g>
+      <path d="M6 92 H264" stroke="#25261f" stroke-width="6" stroke-linecap="round"/>
+      <path d="M118 66 q14 -16 30 -4" fill="none" stroke="#25261f" stroke-width="4" stroke-linecap="round"/></svg>`;
+    host.appendChild(el);
+    el.speed = c.speed;
+    return el;
+  });
+}
+
+// a typical day, written into the guestbook one line at a time
+const DAY = [
+  ['07:30', 'breakfast on the terrace, coffee for twelve'],
+  ['08:10', 'Pedro: “who wants to see whales?”'],
+  ['09:00', 'three strangers leave for the summit'],
+  ['10:20', 'the cats claim the hammock'],
+  ['11:00', 'check-out hugs at the yellow door'],
+  ['12:30', 'road trip to the lava pools, windows down'],
+  ['14:00', 'someone is painting the theatre wall again'],
+  ['15:00', 'check-in: a stranger from Finland'],
+  ['16:40', 'yoga in the greenhouse'],
+  ['17:50', 'whales spotted from the harbour'],
+  ['19:30', 'loving dinner · soup, a main, dessert, 14 languages'],
+  ['21:04', 'the fire pit is lit'],
+  ['22:15', 'a guitar, a song nobody knows the words to'],
+  ['23:00', 'quiet hours. the stars take over'],
+];
 
 // 2 · the climb: sea level to the summit, morning to golden hour
 const CLIMB = {
@@ -33,7 +73,7 @@ const CLIMB = {
 };
 
 // The journey starts right away; the 3D world plugs in whenever it is ready (or never, on old devices).
-export function initJourney({ mobile, reduced }) {
+export function initJourney({ mobile }) {
   let world = null;
   const pin = document.querySelector('.world-pin');
   const pinPos = { x: 0, y: 0, visible: false };
@@ -48,6 +88,36 @@ export function initJourney({ mobile, reduced }) {
     world.goal.tod = tod;
     world.goal.night = night;
   };
+
+  // ---------- hero: the film, then its ink sketch, then the drawn island ----------
+  const hero = document.querySelector('[data-hero]');
+  const heroVideo = hero.querySelector('[data-hero-video]');
+  const heroCopy = hero.querySelector('[data-hero-copy]');
+  const heroShade = hero.querySelector('.hero__shade');
+  const cue = hero.querySelector('.hero__cue');
+  const clouds = makeClouds(hero.querySelector('[data-clouds]'));
+  let filmOn = false, heroP = 0;
+  const heroUpdate = (p) => {
+    heroP = p;
+    const zoom = 1 + 0.35 * p;
+    if (filmOn) {
+      world.film.zoom = zoom;
+      world.film.sketch = clamp01((p - 0.38) / 0.24);
+      world.film.gone = clamp01((p - 0.64) / 0.32);
+    } else {
+      heroVideo.style.transform = `scale(${zoom})`;
+      heroVideo.style.opacity = 1 - clamp01((p - 0.7) / 0.25);
+    }
+    heroShade.style.opacity = 1 - clamp01((p - 0.3) / 0.2);
+    heroCopy.style.transform = `translate3d(0, ${-p * 320}px, 0)`;
+    heroCopy.style.opacity = 1 - clamp01(p / 0.3);
+    heroCopy.style.visibility = p > 0.32 ? 'hidden' : 'visible';
+    cue.style.opacity = 1 - clamp01(p * 8);
+    clouds.forEach((c) => { c.style.transform = `translate3d(0, ${-p * c.speed * innerHeight}px, 0)`; });
+    setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
+  };
+  ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', onUpdate: (st) => heroUpdate(st.progress) });
+  heroUpdate(0);
 
   // ---------- arrival ----------
   const lines = gsap.utils.toArray('.arrival [data-line]');
@@ -67,13 +137,12 @@ export function initJourney({ mobile, reduced }) {
     end: 'bottom bottom',
     onUpdate(st) {
       const t = st.progress;
-      show(lines[0], -0.1, 0.2, t);
-      show(lines[1], 0.2, 0.38, t);
-      show(lines[2], 0.4, 0.6, t);
-      show(lines[3], 0.64, 1, t);
-      pinOn = t > 0.42 && t < 0.62;
+      show(lines[0], 0.02, 0.3, t);
+      show(lines[1], 0.32, 0.58, t);
+      show(lines[2], 0.62, 1, t);
+      pinOn = t > 0.58;
       if (!pinOn) pin.classList.remove('is-on');
-      hud.textContent = Math.max(0, 9.8 * (1 - t / 0.6)).toFixed(1);
+      hud.textContent = Math.max(0, 9.8 * (1 - t)).toFixed(1);
       setView(ARRIVAL.pos.getPoint(t), ARRIVAL.look.getPoint(t), keys(ARRIVAL.fov, t), keys(ARRIVAL.tod, t));
     },
   });
@@ -97,12 +166,77 @@ export function initJourney({ mobile, reduced }) {
     size();
     ScrollTrigger.addEventListener('refreshInit', size);
     const st = { trigger: places, start: 'top top', end: 'bottom bottom', invalidateOnRefresh: true };
-    gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { ...st, scrub: reduced ? true : 0.8 } });
+    // a cat walks the dotted trail and every room tints the paper with its own colour
+    const stage = places.querySelector('.places__pin');
+    const trail = places.querySelector('[data-trail]');
+    const cat = places.querySelector('[data-trail-cat]');
+    const line = places.querySelector('.trail');
+    const placeEls = gsap.utils.toArray('.place');
+    const total = trail.getTotalLength();
+    let tinted = -1;
+    const walk = (p) => {
+      const pt = trail.getPointAtLength(p * total);
+      const ahead = trail.getPointAtLength(Math.min(total, p * total + 4));
+      cat.style.transform = `translate(${(pt.x / 1000) * line.clientWidth - 23}px, ${(pt.y / 80) * line.clientHeight - 23}px) scaleX(${ahead.x >= pt.x ? 1 : -1}) rotate(${Math.sin(p * 60) * 8}deg)`;
+      const i = Math.min(placeEls.length - 1, Math.floor(p * placeEls.length));
+      if (i !== tinted) {
+        tinted = i;
+        stage.style.backgroundColor = `color-mix(in srgb, ${placeEls[i].dataset.color} 13%, #f5eedf)`;
+      }
+    };
+    walk(0);
+    gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { ...st, scrub: 0.8, onUpdate: (s) => walk(s.progress) } });
     gsap.utils.toArray('.place__ink').forEach((ink) => {
       gsap.fromTo(ink, { rotate: -24, scale: 0.6 }, { rotate: 6, scale: 1, ease: 'none', scrollTrigger: { ...st, scrub: true } });
     });
     return () => { ScrollTrigger.removeEventListener('refreshInit', size); places.style.height = ''; };
   });
+
+  // ---------- the statement lights up word by word ----------
+  const statement = document.querySelector('[data-statement]');
+  const hot = new Set(['fire,', 'table', 'family.']);
+  statement.setAttribute('aria-label', statement.textContent);
+  statement.innerHTML = statement.textContent.trim().split(/\s+/).map((w) => `<span class="wd${hot.has(w) ? ' hot' : ''}" aria-hidden="true">${w}</span>`).join(' ');
+  const words = [...statement.querySelectorAll('.wd')];
+  ScrollTrigger.create({
+    trigger: statement, start: 'top 80%', end: 'bottom 40%', scrub: true,
+    onUpdate: (st) => { const n = Math.round(st.progress * words.length * 1.05); words.forEach((w, i) => w.classList.toggle('on', i < n)); },
+  });
+
+  // ---------- life at the house: the phone tilts as you pass ----------
+  gsap.fromTo('[data-phone]', { rotate: -12, y: 80 }, { rotate: 6, y: -140, ease: 'none', scrollTrigger: { trigger: '.life', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+  // ---------- numbers count up, the guestbook starts writing ----------
+  ScrollTrigger.create({
+    trigger: '.numbers', start: 'top 70%', once: true,
+    onEnter: () => {
+      document.querySelectorAll('.stat b').forEach((b) => {
+        const o = { v: 0 }, end = parseFloat(b.dataset.n), d = Number(b.dataset.d || 0);
+        gsap.to(o, { v: end, duration: 2.2, ease: 'power3.out', onUpdate: () => { b.textContent = d ? o.v.toFixed(d) : Math.round(o.v).toLocaleString('en'); } });
+      });
+      const box = document.querySelector('[data-log]');
+      let i = 0;
+      const add = () => {
+        const [time, text] = DAY[i++ % DAY.length];
+        const row = document.createElement('div');
+        row.innerHTML = `<time>${time}</time><span>${text}</span>`;
+        box.appendChild(row);
+        gsap.fromTo(row, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' });
+        while (box.children.length > 12) box.firstChild.remove();
+      };
+      for (let k = 0; k < 5; k++) add();
+      setInterval(add, 1700);
+    },
+  });
+
+  // ---------- creators: rings turn with the scroll, portraits rise ----------
+  gsap.utils.toArray('.person').forEach((el, i) => {
+    gsap.fromTo(el, { y: 140, opacity: 0 }, { y: 0, opacity: 1, duration: 1.5, ease: 'power4.out', delay: i * 0.12, scrollTrigger: { trigger: '.people', start: 'top 85%' } });
+    gsap.to(el.querySelector('.person__ring'), { rotate: 200, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } });
+  });
+
+  // ---------- the last word ----------
+  gsap.fromTo('.mega > *', { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.4, ease: 'power4.out', stagger: 0.12, scrollTrigger: { trigger: '.foot', start: 'top 85%' } });
 
   // dinners: the photos fan out like a hand of cards
   const stack = gsap.utils.toArray('[data-stack] img');
@@ -199,6 +333,18 @@ export function initJourney({ mobile, reduced }) {
       ScrollTrigger.getAll().forEach((st) => st.vars.onUpdate?.(st));
       if (houseST.isActive) world.setActive(false);
       world.snap();
+      // the film moves into the shader only once it is really playing, so it never flashes black
+      const takeFilm = () => {
+        world.setVideo(heroVideo);
+        filmOn = true;
+        // the DOM film steps aside (inline styles from the fallback path would keep it on top)
+        heroVideo.style.opacity = '0';
+        heroVideo.style.transform = '';
+        document.documentElement.classList.add('has-world');
+        heroUpdate(heroP);
+      };
+      if (!heroVideo.paused && heroVideo.readyState >= 3) takeFilm();
+      else heroVideo.addEventListener('playing', takeFilm, { once: true });
     },
   };
 }

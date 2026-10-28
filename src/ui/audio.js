@@ -131,6 +131,18 @@ export function createAudio() {
   }
 
   const sfx = {
+    blip() {
+      const c = ac();
+      const t = c.currentTime;
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(1500 + Math.random() * 500, t);
+      g.gain.setValueAtTime(0.025, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      o.connect(g).connect(c.destination);
+      o.start(t); o.stop(t + 0.06);
+    },
     tear() {
       // paper: a run of tiny crackles
       for (let i = 0; i < 9; i++) setTimeout(() => noise(0.05 + Math.random() * 0.05, { freq: 2600 + Math.random() * 2400, q: 1.4, gain: 0.22 }), i * 28 + Math.random() * 20);

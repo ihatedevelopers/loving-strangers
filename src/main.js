@@ -3,7 +3,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { createAudio } from './ui/audio.js';
-import { initIntro } from './ui/intro.js';
+import { initLoader, initPlayButton } from './ui/loader.js';
+import { initInteractions } from './ui/interactions.js';
 import { initCats } from './ui/cats.js';
 import { initRooms } from './ui/rooms.js';
 import { initPass } from './ui/pass.js';
@@ -14,10 +15,11 @@ gsap.registerPlugin(ScrollTrigger);
 if (import.meta.env.DEV) Object.assign(window, { gsap, ScrollTrigger });
 if (import.meta.env.DEV) queueMicrotask(() => { window.__lenis = lenis; });
 
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Motion is the product here, so like the portfolio it ignores the OS "reduce motion" switch
+// (Windows turns it on whenever "show animations" is off, which hid the whole journey).
 const mobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 
-const lenis = new Lenis({ lerp: reduced ? 1 : 0.1, smoothWheel: !reduced });
+const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
 lenis.on('scroll', ScrollTrigger.update);
 // sections change height in JS (the horizontal track), so re-measure Lenis whenever ScrollTrigger does
 ScrollTrigger.addEventListener('refresh', () => lenis.resize());
@@ -44,8 +46,8 @@ const worldReady = import('./world/world.js')
     const canvas = document.getElementById('world');
     world = await createWorld(canvas, { mobile });
     if (import.meta.env.DEV) window.__world = world;
-    // nothing to draw behind the intro card yet
-    if (document.body.classList.contains('is-intro')) world.setActive(false);
+    // nothing to draw behind the loader yet
+    if (document.body.classList.contains('is-loading')) world.setActive(false);
     return world;
   })
   .catch((err) => {
@@ -60,11 +62,25 @@ initRooms({ audio });
 initPass({ audio, toast });
 initReviews();
 
-initIntro({
-  audio,
-  toast,
-  onStart() {
-    document.body.classList.remove('is-intro');
+initInteractions({ audio });
+initPlayButton({ audio, toast });
+
+// the opening film: smaller file on phones
+const heroVideo = document.querySelector('[data-hero-video]');
+heroVideo.src = mobile ? 'media/video/intro-720.mp4' : 'media/video/intro-1080.mp4';
+const filmReady = new Promise((res) => {
+  heroVideo.addEventListener('canplaythrough', res, { once: true });
+  setTimeout(res, 4000);
+});
+heroVideo.load();
+
+// the loader waits for the film and the island (but never longer than a few seconds)
+const timeout = (ms) => new Promise((res) => setTimeout(res, ms));
+initLoader({
+  ready: Promise.all([filmReady, Promise.race([worldReady, timeout(5500)])]),
+  onReveal() {
+    document.body.classList.remove('is-loading');
+    heroVideo.play().catch(() => {});
     lenis.start();
     cats?.wake();
     world?.setActive(true);
@@ -74,7 +90,7 @@ initIntro({
 
 // the journey never waits for the 3D world: it starts now and the world joins when ready
 import('./journey.js').then(({ initJourney }) => {
-  const journey = initJourney({ mobile, reduced });
+  const journey = initJourney({ mobile });
   worldReady.then((w) => journey.attach(w));
 });
 
@@ -83,6 +99,7 @@ const vio = new IntersectionObserver((entries) => {
   for (const e of entries) {
     const v = e.target;
     if (e.isIntersecting) {
+      if (mobile && v.dataset.srcMobile && !v.dataset.swapped) { v.dataset.swapped = 1; v.src = v.dataset.srcMobile; }
       if (v.preload !== 'auto') v.preload = 'auto';
       v.play().catch(() => {});
     } else v.pause();
