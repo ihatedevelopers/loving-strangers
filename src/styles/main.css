@@ -89,7 +89,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .is-loading .nav { transform: translateY(-110%); }
 .nav.is-solid { background: color-mix(in srgb, var(--paper) 94%, transparent); box-shadow: 0 1px 0 rgba(37, 38, 31, .12); }
-.nav__logo img { width: clamp(150px, 15vw, 210px); height: auto; }
+.nav__logo { display: grid; }
+.nav__logo img { grid-area: 1 / 1; width: clamp(150px, 15vw, 210px); height: auto; transition: opacity .5s; }
+.nav__logo .logo-light { opacity: 0; }
+/* over the film and at night the nav turns light, with a soft shadow of dusk behind it */
+.nav::before { content: ''; position: absolute; inset: 0 0 -50px; z-index: -1; pointer-events: none; background: linear-gradient(180deg, rgba(16, 14, 11, .62), rgba(16, 14, 11, 0)); opacity: 0; transition: opacity .5s; }
+.on-film .nav, .on-night .nav { color: #fffdf6; }
+.on-film .nav::before { opacity: 1; }
+.on-film .nav__logo .logo-light, .on-night .nav__logo .logo-light { opacity: 1; }
+.on-film .nav__logo .logo-dark, .on-night .nav__logo .logo-dark { opacity: 0; }
+.on-film .nav__links a { text-shadow: 0 1px 10px rgba(0, 0, 0, .5); }
 .nav__links { display: flex; gap: clamp(12px, 2vw, 30px); margin-left: auto; font-size: 15px; }
 .nav__links a { text-decoration: none; position: relative; padding: 6px 0; }
 .nav__links i { font: normal 10px var(--f-mono); vertical-align: super; margin-right: 3px; opacity: .55; }
@@ -112,7 +121,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .menu a { font-family: var(--f-display); font-size: 34px; text-decoration: none; padding: 4px 0; }
 .on-night .nav { color: var(--cream); }
 .on-night .nav.is-solid { background: color-mix(in srgb, var(--night) 92%, transparent); box-shadow: 0 1px 0 rgba(241, 229, 198, .12); }
-.on-night .nav__logo img { filter: invert(1) hue-rotate(180deg) brightness(1.4) saturate(1.4); }
 
 /* ticket-shaped buttons: notched edges and a perforated stub */
 .ticket-btn, .ticket {

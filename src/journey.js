@@ -109,6 +109,9 @@ export function initJourney({ mobile }) {
     setView(ARRIVAL.pos.getPoint(0), ARRIVAL.look.getPoint(0), ARRIVAL.fov[0], 0);
   };
   ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', onUpdate: (st) => heroUpdate(st.progress) });
+  // the nav reads light while the film is on screen
+  ScrollTrigger.create({ trigger: hero, start: 'top top', end: () => `+=${(hero.offsetHeight - innerHeight) * 0.58}`, invalidateOnRefresh: true, onToggle: (st) => document.body.classList.toggle('on-film', st.isActive) });
+  document.body.classList.add('on-film');
   heroUpdate(0);
 
   // ---------- arrival ----------
