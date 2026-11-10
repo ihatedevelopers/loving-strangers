@@ -3,11 +3,20 @@ import { drawRealCat } from './real-cat.js';
 // The house cats don't chase anyone. Each one has a favourite spot in the page and its own routine;
 // the cursor only gets a look, and a click gets a slow blink back (a cat's way of saying hello).
 
+// the hostel's three plus the neighbours from Madalena (a grey tabby and a cream one drop by too)
 const HOMES = [
+  { sel: '.drone__frame', coat: 'grey', at: 0.2, kind: 'walker', face: 1 },
   { sel: '.room--poets .room__media', coat: 'ginger', at: 0.8, kind: 'sleeper', face: -1 },
+  { sel: '.room--musicians .room__media', coat: 'cream', at: 0.22, kind: 'watcher', face: 1 },
+  { sel: '.included', coat: 'grey', at: 0.85, kind: 'loafer', face: -1 },
+  { sel: '.place__media', n: 1, coat: 'black', at: 0.3, kind: 'sleeper', face: 1 },
+  { sel: '.place__media', n: 3, coat: 'cream', at: 0.7, kind: 'groomer', face: -1 },
   { sel: '.dinners__stack', coat: 'white', at: 0.16, kind: 'groomer', face: 1 },
   { sel: '.guestbook', coat: 'black', at: 0.78, kind: 'loafer', face: -1 },
+  { sel: '.stop', n: 1, coat: 'grey', at: 0.75, kind: 'watcher', face: -1 },
+  { sel: '.person__portrait', coat: 'ginger', at: 0.7, kind: 'loafer', face: -1 },
   { sel: '.scores', coat: 'black', at: 0.6, kind: 'watcher', face: -1, glow: true },
+  { sel: '.pass__main', coat: 'cream', at: 0.12, kind: 'sleeper', face: 1 },
   { sel: '.postcard', coat: 'white', at: 0.72, kind: 'watcher', face: -1 },
   { sel: '.foot', coat: 'ginger', at: 0.5, kind: 'walker', face: 1 },
 ];
@@ -22,10 +31,10 @@ const ROUTINES = {
 };
 
 export function createResidents({ audio, mobile, hearts }) {
-  const scale = mobile ? 0.72 : 1;
+  const scale = mobile ? 0.82 : 1.22;
   const cats = [];
   HOMES.forEach((h, i) => {
-    const el = document.querySelector(h.sel);
+    const el = document.querySelectorAll(h.sel)[h.n || 0];
     if (!el) return;
     cats.push({
       ...h, el, coat: h.coat, seed: i + 1, x: 0, y: 0, pos: h.at, dir: h.face,
@@ -117,6 +126,18 @@ export function createResidents({ audio, mobile, hearts }) {
       ctx.scale(c.dir * scale, scale);
       drawRealCat(ctx, c, c.pose, t, c.glow);
       ctx.restore();
+      if (c.pose === 'sleep') {
+        // a couple of soft z's drifting up, the only hint that this one is fast asleep
+        ctx.save();
+        ctx.fillStyle = c.glow || document.body.classList.contains('on-night') ? '#e6ecd6' : '#343631';
+        ctx.font = `700 ${Math.round(11 * scale)}px Syne, sans-serif`;
+        for (let k = 0; k < 2; k++) {
+          const z = (t * 0.4 + k * 0.5 + c.seed * 0.13) % 1;
+          ctx.globalAlpha = 0.55 * Math.sin(z * Math.PI) * Math.max(0, Math.min(1, (c.y - 70) / 40));
+          ctx.fillText('z', c.x + c.dir * (22 + z * 10) * scale, c.y - (28 + z * 26) * scale);
+        }
+        ctx.restore();
+      }
     }
   }
 

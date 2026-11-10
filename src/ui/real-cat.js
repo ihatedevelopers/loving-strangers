@@ -4,22 +4,24 @@
 export const COATS = {
   ginger: { base: '#d9883e', light: '#f2bf7f', shadow: '#9a5420', stripe: 'rgba(150, 72, 20, .55)', belly: '#f3d2a2', eye: ['#c8d85a', '#7e9a2a'], nose: '#d98a7f', ear: '#d99a8c', whisker: 'rgba(255,255,255,.8)' },
   white: { base: '#efece6', light: '#ffffff', shadow: '#b8bcc6', stripe: null, belly: '#ffffff', eye: ['#9fd8f6', '#3f8fc4'], nose: '#e9a2a6', ear: '#efb7bc', whisker: 'rgba(120,120,120,.55)' },
+  grey: { base: '#8e9094', light: '#c9cbcf', shadow: '#55575c', stripe: 'rgba(58, 60, 64, .5)', belly: '#dcdddf', eye: ['#e0cb62', '#9c8a2c'], nose: '#b98a8c', ear: '#caa0a4', whisker: 'rgba(255,255,255,.75)' },
+  cream: { base: '#e6c79c', light: '#f9e8cc', shadow: '#b48b5c', stripe: 'rgba(176, 122, 72, .32)', belly: '#fbefdf', eye: ['#b3d872', '#5f912e'], nose: '#e0a092', ear: '#e3aea4', whisker: 'rgba(255,255,255,.8)' },
   black: { base: '#232326', light: '#4a4a52', shadow: '#0c0c0e', stripe: null, belly: '#2c2c31', eye: ['#f6d24a', '#c98a12'], nose: '#3a3a40', ear: '#3a3036', whisker: 'rgba(230,230,230,.6)' },
 };
 
 // deterministic noise so the fur pattern stays put frame to frame
-function rng(seed) {
+export function rng(seed) {
   let s = seed * 9301 + 49297;
   return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
 }
 
-function ellipse(path, x, y, rx, ry, rot = 0) {
+export function ellipse(path, x, y, rx, ry, rot = 0) {
   // start a fresh sub-path, or the pen draws a line from the previous shape
   path.moveTo(x + rx * Math.cos(rot), y + rx * Math.sin(rot));
   path.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2);
   path.closePath();
 }
-function limb(path, x0, y0, x1, y1, w0, w1) {
+export function limb(path, x0, y0, x1, y1, w0, w1) {
   // a tapered limb as a closed quad with round ends
   const a = Math.atan2(y1 - y0, x1 - x0) + Math.PI / 2;
   const cx = Math.cos(a), cy = Math.sin(a);
@@ -48,7 +50,7 @@ function tailPoints(x, y, a0, curl, n, seg, wave, t, speed) {
 }
 
 // the tail is painted as one brush stroke that thins toward the tip (no seams between segments)
-function drawTail(ctx, pts, w0, w1, coat, stripes) {
+export function drawTail(ctx, pts, w0, w1, coat, stripes) {
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   const pass = (col, scale, dy, alpha) => {
     ctx.strokeStyle = col; ctx.globalAlpha = alpha;
@@ -82,7 +84,7 @@ function earPath(path, x, y, tilt, h) {
 }
 
 // paint a silhouette: base coat, light from above, shadow below, then fur
-function paint(ctx, path, coat, box, seed, stripes) {
+export function paint(ctx, path, coat, box, seed, stripes) {
   ctx.fillStyle = coat.base;
   ctx.fill(path);
   ctx.save();
@@ -228,9 +230,9 @@ export function drawRealCat(ctx, cat, pose, t, glow = false) {
     sleeping = pose === 'yawn';
   }
 
-  if (tailBack) drawTail(ctx, tailBack, 4.4, 2.4, coat, cat.coat === 'ginger');
-  paint(ctx, body, coat, box, cat.seed * 13, cat.coat === 'ginger');
-  if (tailFront) drawTail(ctx, tailFront, 4.4, 2.4, coat, cat.coat === 'ginger');
+  if (tailBack) drawTail(ctx, tailBack, 4.4, 2.4, coat, !!coat.stripe);
+  paint(ctx, body, coat, box, cat.seed * 13, !!coat.stripe);
+  if (tailFront) drawTail(ctx, tailFront, 4.4, 2.4, coat, !!coat.stripe);
   innerEars(ctx, hx, hy, coat, tw);
   // a pale chest and chin
   ctx.save(); ctx.clip(body);

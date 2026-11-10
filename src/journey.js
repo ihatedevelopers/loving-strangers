@@ -110,8 +110,10 @@ export function initJourney({ mobile }) {
   };
   ScrollTrigger.create({ trigger: hero, start: 'top top', end: 'bottom bottom', onUpdate: (st) => heroUpdate(st.progress) });
   // the nav reads light while the film is on screen
-  ScrollTrigger.create({ trigger: hero, start: 'top top', end: () => `+=${(hero.offsetHeight - innerHeight) * 0.58}`, invalidateOnRefresh: true, onToggle: (st) => document.body.classList.toggle('on-film', st.isActive) });
-  document.body.classList.add('on-film');
+  // (onRefresh too, so a reload in the middle of the page or a jump never leaves it stuck on)
+  const film = (st) => document.body.classList.toggle('on-film', st.isActive);
+  ScrollTrigger.create({ trigger: hero, start: 'top top', end: () => `+=${(hero.offsetHeight - innerHeight) * 0.58}`, invalidateOnRefresh: true, onToggle: film, onRefresh: film, onUpdate: film });
+  document.body.classList.toggle('on-film', scrollY < innerHeight);
   heroUpdate(0);
 
   // ---------- arrival ----------

@@ -15,6 +15,7 @@ export function initPass({ audio, toast }) {
   const tear = () => {
     if (torn) return;
     torn = true;
+    document.dispatchEvent(new CustomEvent('ls:coupon'));
     audio.sfx.tear();
     pass.classList.add('is-torn');
     const dir = vertical() ? 1 : 1;

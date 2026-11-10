@@ -1,4 +1,5 @@
 import { createResidents } from './residents.js';
+import { createHost } from './host-cat.js';
 
 // The hostel's cats (default): each lives in its own corner of the page and minds its own business.
 // The older looks (?cats=ink|silhouette|paws) still trail the cursor.
@@ -38,6 +39,7 @@ export function initCats({ audio, mobile }) {
   const hearts = [];
   const paws = [];
   const residents = STYLE === 'house' ? createResidents({ audio, mobile, hearts }) : null;
+  const host = residents ? createHost({ audio, mobile, hearts, residents }) : null;
   let lastPaw = { x: 0, y: 0 }, pawSide = 1;
 
   if (fine) {
@@ -154,6 +156,8 @@ export function initCats({ audio, mobile }) {
     if (residents) {
       residents.step(dt, t, mouse, H);
       residents.draw(ctx, t);
+      host.step(dt, t, W, H);
+      host.draw(ctx, t, W);
     } else {
     // The line of cats keeps to one side of the cursor and only swaps sides once the cursor has
     // clearly crossed over. (Tying the target to each cat's own facing made it flip forever.)
@@ -248,6 +252,6 @@ export function initCats({ audio, mobile }) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  if (import.meta.env.DEV) { window.__cats = residents ? residents.cats : cats; }
+  if (import.meta.env.DEV) { window.__cats = residents ? residents.cats : cats; window.__host = host?.host; }
   return { wake() {} };
 }
