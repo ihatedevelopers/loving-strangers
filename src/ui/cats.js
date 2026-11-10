@@ -1,9 +1,11 @@
-// Three house cats follow your cursor, drawn in the same ink as the island.
+import { HOUSE_CATS, drawHouseCat } from './house-cats.js';
+
+// Three house cats follow your cursor.
 // They trot after it, sit down when it stops, and fall asleep if you leave them long enough.
 
 const INK = '#343631';
-// Pedro is choosing between three looks: ?cats=ink (default), ?cats=silhouette, ?cats=paws
-const STYLE = new URLSearchParams(location.search).get('cats') || 'ink';
+// The hostel's real cats by default (?cats=house); older looks stay available: ?cats=ink, ?cats=silhouette, ?cats=paws
+const STYLE = new URLSearchParams(location.search).get('cats') || 'house';
 const CATS = STYLE === 'silhouette'
   ? [{ fill: INK, stripes: false, eye: '#fbb600' }, { fill: INK, stripes: false, eye: '#fbb600' }, { fill: INK, stripes: false, eye: '#fbb600' }]
   : [{ fill: '#fbb600', stripes: true, eye: INK }, { fill: '#fffdf6', stripes: false, eye: INK }, { fill: '#2b2c25', stripes: false, eye: '#fbb600' }];
@@ -25,11 +27,16 @@ export function initCats({ audio, mobile }) {
 
   const scale = mobile ? 0.8 : 1;
   const mouse = { x: W * 0.5, y: H * 0.72, inside: fine, hover: 0, hoverGoal: 0, down: 0 };
-  const cats = CATS.slice(0, mobile ? 2 : 3).map((look, i) => ({
-    ...look,
+  const looks = STYLE === 'house' ? HOUSE_CATS : CATS;
+  const cats = looks.slice(0, mobile ? 2 : 3).map((look, i) => ({
+    ...look, look,
     x: W * 0.5 - 60 - i * 55, y: H + 40, vx: 0, vy: 0,
     face: 1, phase: i * 1.7, still: 0, speed: 0, state: 'walk', tail: Math.random() * 6,
+    seed: Math.random() * 10, blink: 1, blinkT: 1 + Math.random() * 4, twitch: 0, pounce: null,
   }));
+  const catScale = STYLE === 'house' ? 1.1 : 1;
+  // the lead cat hunts the cursor: a fast flick then a sudden stop makes it crouch, wiggle and pounce
+  const hunt = { px: 0, py: 0, energy: 0, calm: 0, cooldown: 3 };
   const hearts = [];
   const paws = [];
   let lastPaw = { x: 0, y: 0 }, pawSide = 1;
@@ -150,8 +157,49 @@ export function initCats({ audio, mobile }) {
     if (lead.x < mouse.x - 30) side = -1;
     else if (lead.x > mouse.x + 30) side = 1;
 
+    const mv = Math.hypot(mouse.x - hunt.px, mouse.y - hunt.py) / Math.max(dt, 1e-3);
+    hunt.px = mouse.x; hunt.py = mouse.y;
+    hunt.energy = Math.max(hunt.energy * Math.exp(-dt * 1.1), mv > 900 ? 1 : 0);
+    hunt.calm = mv < 40 ? hunt.calm + dt : 0;
+    hunt.cooldown -= dt;
+
     cats.forEach((c, i) => {
-      const tx = mouse.x + side * (46 + 58 * i) * scale;
+      // blinking and ear twitches keep them alive even when nothing happens
+      c.blinkT -= dt;
+      if (c.blinkT < 0) { c.blink = 0.1; if (c.blinkT < -0.13) { c.blink = 1; c.blinkT = 2 + Math.random() * 4.5; } }
+      c.twitch = c.twitch > 0 ? c.twitch - dt : (Math.random() < dt * 0.15 ? 0.3 : 0);
+
+      if (i === 0 && STYLE === 'house' && fine) {
+        const d = Math.hypot(mouse.x - c.x, mouse.y - c.y);
+        if (!c.pounce && hunt.cooldown <= 0 && hunt.energy > 0.45 && hunt.calm > 0.12 && d > 70 && d < 340 && c.state !== 'sleep') {
+          c.pounce = { phase: 'crouch', t: 0, fx: c.x, fy: c.y, tx: mouse.x - Math.sign(mouse.x - c.x || 1) * 22, ty: mouse.y + 12 };
+          c.face = Math.sign(mouse.x - c.x) || c.face;
+        }
+        if (c.pounce) {
+          const pz = c.pounce;
+          pz.t += dt;
+          c.vx = 0; c.vy = 0; c.still = 0;
+          if (pz.phase === 'crouch') {
+            c.state = 'crouch';
+            if (pz.t > 0.8) { pz.phase = 'leap'; pz.t = 0; }
+          } else {
+            const u = Math.min(1, pz.t / 0.42);
+            c.state = 'leap';
+            c.x = pz.fx + (pz.tx - pz.fx) * u;
+            c.y = pz.fy + (pz.ty - pz.fy) * u - Math.sin(u * Math.PI) * 70;
+            c.leapTilt = (u - 0.5) * 0.7;
+            if (u >= 1) {
+              c.pounce = null; c.state = 'sit'; c.leapTilt = 0;
+              hunt.cooldown = 6; hunt.energy = 0;
+              hearts.push({ x: c.x + c.face * 20, y: c.y - 46, t: 0 });
+              if (Math.random() < 0.6) audio.sfx.mrrp();
+            }
+          }
+          return;
+        }
+      }
+
+      const tx = mouse.x + side * (46 + 62 * i) * scale * catScale;
       const ty = fine ? mouse.y + (34 + i * 5) * scale : H - 16;
       const dx = tx - c.x, dy = ty - c.y;
       const dist = Math.hypot(dx, dy);
@@ -196,7 +244,20 @@ export function initCats({ audio, mobile }) {
       }
     } else {
       // draw back to front so the leader is on top
-      for (let i = cats.length - 1; i >= 0; i--) drawCat(cats[i], t);
+      for (let i = cats.length - 1; i >= 0; i--) {
+        const c = cats[i];
+        if (STYLE !== 'house') { drawCat(c, t); continue; }
+        const sc = scale * catScale;
+        // eyes follow the cursor from wherever the head is
+        const hx = c.x + c.face * 27 * sc, hy = c.y - 36 * sc;
+        const lx = Math.max(-1, Math.min(1, ((mouse.x - hx) * c.face) / 160));
+        const ly = Math.max(-1, Math.min(1, (mouse.y - hy) / 160));
+        ctx.save();
+        ctx.translate(c.x, c.y);
+        ctx.scale(c.face * sc, sc);
+        drawHouseCat(ctx, c, t, lx, ly);
+        ctx.restore();
+      }
     }
 
     for (let i = hearts.length - 1; i >= 0; i--) {
@@ -225,6 +286,6 @@ export function initCats({ audio, mobile }) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  if (import.meta.env.DEV) window.__cats = cats;
+  if (import.meta.env.DEV) { window.__cats = cats; window.__hunt = hunt; }
   return { wake() {} };
 }
