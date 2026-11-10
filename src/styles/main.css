@@ -582,3 +582,15 @@ a.room__media { display: block; color: inherit; }
 [data-book='sun'] .ticket-btn { background: var(--ink); }
 [data-book='sun'] .ticket { background: var(--ink); }
 [data-book='sun'] .ticket-btn__stub, [data-book='sun'] .ticket__stub { position: relative; z-index: 3; }
+
+/* the phone's bottom bar uses the same ticket, so each option shows there too */
+.actionbar .actionbar__book.ticket-btn { padding: 0; background: none; border-radius: 0; box-shadow: none; filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .25)); }
+.actionbar .actionbar__book .ticket-btn__main { flex: 1; display: grid; place-items: center; padding: 14px 10px; font-size: 16px; }
+.actionbar .actionbar__book .ticket-btn__stub { display: grid; place-items: center; padding: 14px 14px; font-size: 14px; }
+[data-book='sun'] .actionbar .actionbar__book.ticket-btn { border-radius: 999px; }
+
+/* preview mode (?book=…): phones have no hover, so each button plays its move every few seconds */
+.ticket-btn.is-demo, .ticket.is-demo { transform: rotate(-2deg) translateY(-2px); }
+[data-book='stamp'] .ticket-btn.is-demo::after, [data-book='stamp'] .ticket.is-demo::after { transform: rotate(-14deg) scale(1); opacity: 1; }
+[data-book='sun'] .ticket-btn.is-demo::before, [data-book='sun'] .ticket.is-demo::before { transform: scale(40); }
+[data-book='sun'] .ticket-btn.is-demo .ticket-btn__main, [data-book='sun'] .ticket.is-demo .ticket__body { color: var(--ink); }

@@ -19,6 +19,13 @@ if (import.meta.env.DEV) queueMicrotask(() => { window.__lenis = lenis; });
 // (Windows turns it on whenever "show animations" is off, which hid the whole journey).
 // Pedro is choosing the book-now animation: ?book=ticket (default), ?book=stamp, ?book=sun
 document.documentElement.dataset.book = new URLSearchParams(location.search).get('book') || 'ticket';
+if (new URLSearchParams(location.search).has('book')) {
+  // preview links for Pedro: play the chosen button's move on a loop so it shows on a phone too
+  setInterval(() => {
+    document.querySelectorAll('.ticket-btn, .ticket').forEach((b) => b.classList.add('is-demo'));
+    setTimeout(() => document.querySelectorAll('.is-demo').forEach((b) => b.classList.remove('is-demo')), 1600);
+  }, 3800);
+}
 const mobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 
 const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });

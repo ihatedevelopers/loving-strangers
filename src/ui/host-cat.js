@@ -84,7 +84,7 @@ export function createHost({ audio, mobile, hearts, residents }) {
     place(W, H);
     const now = performance.now();
     const idle = (now - lastInput) / 1000;
-    const hidden = document.body.classList.contains('on-film') || document.querySelector('.is-loading') || document.querySelector('[data-menu]:not([hidden])');
+    const hidden = scrollY < innerHeight * 0.8 || document.body.classList.contains('on-film') || document.querySelector('.is-loading') || document.querySelector('[data-menu]:not([hidden])');
     const night = document.body.classList.contains('on-night');
 
     // first appearance: ears and eyes over the edge, a look around, then up
