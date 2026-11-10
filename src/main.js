@@ -17,6 +17,8 @@ if (import.meta.env.DEV) queueMicrotask(() => { window.__lenis = lenis; });
 
 // Motion is the product here, so like the portfolio it ignores the OS "reduce motion" switch
 // (Windows turns it on whenever "show animations" is off, which hid the whole journey).
+// Pedro is choosing the book-now animation: ?book=ticket (default), ?book=stamp, ?book=sun
+document.documentElement.dataset.book = new URLSearchParams(location.search).get('book') || 'ticket';
 const mobile = window.matchMedia('(max-width: 900px), (pointer: coarse)').matches;
 
 const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });

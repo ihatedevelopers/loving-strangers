@@ -49,6 +49,17 @@ export function initRooms({ audio }) {
     });
   });
 
+  // dancers: the room waits in the dark and your cursor is the spotlight
+  document.querySelectorAll('[data-spot]').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--sx', `${e.clientX - r.left}px`);
+      el.style.setProperty('--sy', `${e.clientY - r.top}px`);
+      el.classList.add('is-lit');
+    });
+    el.addEventListener('pointerleave', () => el.classList.remove('is-lit'));
+  });
+
   // musicians: the record spins and strums when you touch it
   document.querySelectorAll('[data-record]').forEach((el) => {
     let last = 0;

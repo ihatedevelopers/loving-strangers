@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Loving Strangers Hostel · Madalena do Pico, Azores</title>
-  <meta name="description" content="A house of artists at the foot of Mount Pico, Azores. Dorms and rooms named after poets, sculptors, photographers and musicians, fire-pit nights and dinners with strangers.">
-  <meta name="theme-color" content="#f5eedf">
+  <meta name="description" content="A place to inspire and connect in the middle of the Atlantic ocean: a hostel in Madalena, Pico, Azores, with rooms named after the arts, family dinners and a fire pit under the stars.">
+  <meta name="theme-color" content="#e6ecd6">
   <meta name="robots" content="noindex, nofollow"><!-- draft: remove at launch -->
   <meta property="og:title" content="Loving Strangers Hostel · Pico, Azores">
-  <meta property="og:description" content="hello, stranger. A house of artists at the foot of Mount Pico.">
+  <meta property="og:description" content="A place to inspire and connect in the middle of the Atlantic ocean.">
   <meta property="og:image" content="media/img/home-house-exterior-pico-mountain-guests-1600.webp">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="brand/sun-y.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="media/ink/sun-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Questrial&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400..800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./src/styles/main.css">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"Hostel","name":"Loving Strangers Hostel","url":"https://www.lovingstrangershostel.com","telephone":"+351915111011","email":"info@lovingstrangershostel.com",
@@ -45,7 +45,7 @@
   <header class="nav" data-nav>
     <a class="nav__logo" href="#top" aria-label="Loving Strangers Hostel, back to the start"><img class="logo-dark" src="brand/line-lsh-yb.svg" alt="" width="214" height="46"><img class="logo-light" src="brand/line-lsh-yw.svg" alt="" width="214" height="46"></a>
     <nav class="nav__links" aria-label="Sections">
-      <a href="#house"><i>01</i>the house</a>
+      <a href="#house"><i>01</i>the place</a>
       <a href="#pico"><i>02</i>pico</a>
       <a href="#creators"><i>03</i>the creators</a>
       <a href="#reviews"><i>04</i>strangers say</a>
@@ -56,7 +56,7 @@
     <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu" data-burger aria-label="Menu"><span></span><span></span></button>
   </header>
   <div id="menu" class="menu" data-menu hidden>
-    <a href="#house">the house</a><a href="#pico">pico</a><a href="#creators">the creators</a><a href="#reviews">strangers say</a><a href="#contact">find us</a>
+    <a href="#house">the place</a><a href="#pico">pico</a><a href="#creators">the creators</a><a href="#reviews">strangers say</a><a href="#contact">find us</a>
   </div>
 
   <main id="top">
@@ -65,12 +65,12 @@
       <div class="hero__stage">
         <video class="hero__video" data-hero-video muted playsinline autoplay loop preload="auto" poster="media/video/film-poster.webp" aria-hidden="true"></video>
         <div class="hero__shade" aria-hidden="true"></div>
-        <div class="hero__sunrise" aria-hidden="true" data-sunrise><span class="hero__disc" data-disc></span><span class="hero__sunmark" data-sunmark></span></div>
+        <div class="hero__sunrise" aria-hidden="true" data-sunrise><svg class="hero__disc" data-disc viewBox="0 0 100 92" aria-hidden="true"><path d="M50 88C20 65 4 46 4 28 4 14 15 4 28 4c10 0 18 6 22 14C54 10 62 4 72 4c13 0 24 10 24 24 0 18-16 37-46 60Z"/></svg><span class="hero__sunmark" data-sunmark></span></div>
         <div class="hero__whiteout" aria-hidden="true" data-whiteout></div>
         <div class="hero__copy" data-hero-copy>
           <p class="hero__eyebrow mono">Madalena do Pico · Açores · 38.53° N 28.52° W</p>
-          <h1 id="hero-title" class="hero__title"><span class="w"><span>loving</span></span> <span class="w"><em>strangers</em></span></h1>
-          <p class="hero__sub">a house of artists at the foot of Mount Pico</p>
+          <h1 id="hero-title" class="hero__title hero__title--logo"><span class="w"><img src="brand/text-lsh-yw.svg" alt="Loving Strangers Hostel" width="1267" height="749"></span></h1>
+          <p class="hero__sub">a place to inspire and connect in the middle of the Atlantic ocean</p>
           <div class="hero__actions">
             <button class="play-btn" type="button" data-play data-magnetic data-cursor="play">
               <span class="play-btn__disc" aria-hidden="true"></span>
@@ -110,46 +110,33 @@
       <p class="statement" data-statement>We believe a hostel is not just a place to sleep. It is one fire, one long table and a house full of strangers who somehow leave as family.</p>
 
       <header class="house__head">
-        <p class="eyebrow mono">01 — the house</p>
-        <h2 id="house-title" class="display">Every room in this house<br>is named after <em>an artist.</em></h2>
+        <p class="eyebrow mono">01 — the place</p>
+        <h2 id="house-title" class="display">Every room in this house<br>is named after <em>an art.</em></h2>
         <p class="lede">Pick the one that sounds like you. The beds are handmade, the curtains are blackout, the view is a volcano.</p>
       </header>
 
       <div class="rooms">
         <article class="room room--poets" data-room="poets">
-          <div class="room__media" data-tilt data-parallax><img data-pic="dorm-poets-01-bunks-hammock" alt="The poets dorm: black-steel bunks with mustard curtains, a hammock chair and a bookshelf"></div>
+          <a class="room__media" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-tilt data-cursor="dates"><img data-pic="dorm-poets-01-bunks-hammock" alt="The poets dorm: black-steel bunks with mustard curtains, a hammock chair and a bookshelf"></a>
           <div class="room__text">
             <p class="room__kind mono">shared dorm</p>
             <h3 class="room__name">the poets</h3>
             <p class="room__poem" data-poem="strangers are only friends|who haven't shared|a dinner yet."><span class="sr-only">strangers are only friends who haven't shared a dinner yet.</span></p>
             <ul class="room__facts mono"><li><i data-icon="moon-stars"></i>blackout curtains</li><li><i data-icon="books"></i>hammock chair &amp; a little library</li><li><i data-icon="lock"></i>personal lockers</li></ul>
             <p class="room__price mono">bed from <b>€ —</b> / night · breakfast included</p>
+            <a class="room__book mono" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-cursor="dates">see the room &amp; dates ↗</a>
           </div>
         </article>
 
         <article class="room room--sculptors" data-room="sculptors">
-          <div class="room__media room__media--clay" data-clay data-cursor="push"><img data-pic="dorm-sculptors-01-bunks-shelf" alt="The sculptors dorm: hand-built bunks and a shelf of figurines"></div>
+          <a class="room__media room__media--clay" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-clay data-cursor="push"><img data-pic="dorm-sculptors-01-bunks-shelf" alt="The sculptors dorm: hand-built bunks and a shelf of figurines"></a>
           <div class="room__text">
             <p class="room__kind mono">shared dorm</p>
             <h3 class="room__name">the sculptors</h3>
             <p class="room__copy">Custom bunks in black steel and warm wood, each with its own curtain. Go on, push the photo around: this room is still being shaped.</p>
             <ul class="room__facts mono"><li><i data-icon="bed"></i>custom-built bunks</li><li><i data-icon="moon-stars"></i>blackout curtains</li><li><i data-icon="lock"></i>personal lockers</li></ul>
             <p class="room__price mono">bed from <b>€ —</b> / night · breakfast included</p>
-          </div>
-        </article>
-
-        <article class="room room--photographers" data-room="photographers">
-          <div class="room__media room__media--polaroid" data-develop data-tilt>
-            <img data-pic="room-photographers-01-sunset-windows" alt="The photographers room glowing orange at sunset">
-            <span class="polaroid__caption">sunset from the window</span>
-            <button class="shutter mono" type="button" data-shutter data-cursor="click"><i data-icon="camera"></i>take the shot</button>
-          </div>
-          <div class="room__text">
-            <p class="room__kind mono">private room</p>
-            <h3 class="room__name">the photographers</h3>
-            <p class="room__copy">Windows that catch the last light of the day. A room for anyone who stops to look twice at the same view.</p>
-            <ul class="room__facts mono"><li><i data-icon="bed"></i>double bed</li><li><i data-icon="mountains"></i>terrace or patio</li><li><i data-icon="shower"></i>private bathroom</li></ul>
-            <p class="room__price mono">room from <b>€ —</b> / night · breakfast included</p>
+            <a class="room__book mono" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-cursor="dates">see the room &amp; dates ↗</a>
           </div>
         </article>
 
@@ -166,6 +153,18 @@
             <p class="room__price mono">room from <b>€ —</b> / night · breakfast included</p>
           </div>
         </article>
+
+        <article class="room room--dancers" data-room="dancers">
+          <a class="room__media room__media--spot" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-spot data-cursor="dates"><img data-pic="room-dancers-01" alt="The dancers room: a black and white dance photograph above a sofa bed, a double bed and an en-suite bathroom"></a>
+          <div class="room__text">
+            <p class="room__kind mono">private room</p>
+            <h3 class="room__name">the dancers</h3>
+            <p class="room__copy">A dancer in black and white on the wall, a double bed, a sofa bed and your own bathroom. Move your light around the room: this one likes a spotlight.</p>
+            <ul class="room__facts mono"><li><i data-icon="bed"></i>double bed &amp; sofa bed</li><li><i data-icon="couch"></i>sleeps four</li><li><i data-icon="shower"></i>private bathroom</li></ul>
+            <p class="room__price mono">room from <b>€ —</b> / night · breakfast included</p>
+            <a class="room__book mono" href="https://web.ynnovbooking.com/booking/booking/?l=en&amp;apikey=UkIBrfdtonxIZMuYrtWSFIdDpO7c7uj7" target="_blank" rel="noopener" data-cursor="dates">see the room &amp; dates ↗</a>
+          </div>
+        </article>
       </div>
 
       <div class="included">
@@ -178,41 +177,41 @@
       <!-- the places in between: a walk through the house -->
       <div class="places" data-places>
         <div class="places__pin">
-          <p class="places__fixed display" aria-hidden="true">a place to</p>
+          <p class="places__fixed display" aria-hidden="true">let's</p>
           <div class="places__track" data-track>
             <article class="place" data-color="#f28c28">
               <img class="place__ink" src="media/ink/fruits.webp" alt="" width="608" height="740" loading="lazy">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> cook and eat <em>together.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> cook and eat <em>together</em></h3>
               <div class="place__media" data-tilt><img data-pic="kitchen-01-shared-kitchen" alt="The shared kitchen"></div>
-              <p class="place__name mono">the kitchen</p>
+              <p class="place__name mono">at the kitchen</p>
             </article>
             <article class="place" data-color="#4c9a5b">
               <img class="place__ink" src="media/ink/yoga.webp" alt="" width="567" height="718" loading="lazy">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> evolve, <em>spiritually, physically, emotionally.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> evolve <em>spiritually, physically, emotionally</em></h3>
               <div class="place__media" data-tilt><img data-pic="greenhouse-02-interior-wide" alt="The glass greenhouse used for yoga"></div>
-              <p class="place__name mono">the greenhouse</p>
+              <p class="place__name mono">at the greenhouse</p>
             </article>
             <article class="place" data-color="#8a5cc2">
               <img class="place__ink" src="media/ink/guitar-fire.webp" alt="" width="608" height="674" loading="lazy">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> get inspired, <em>share and create.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> get inspired, <em>share and create</em></h3>
               <div class="place__media" data-tilt><img data-pic="theatre-02-mural-painting" alt="A guest painting a mural in the theatre room"></div>
-              <p class="place__name mono">the theatre</p>
+              <p class="place__name mono">at the theatre</p>
             </article>
             <article class="place" data-color="#3d7fc2">
               <img class="place__ink" src="media/ink/hands.webp" alt="" width="718" height="501" loading="lazy">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> connect and <em>work together.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> connect and <em>work together</em></h3>
               <div class="place__media" data-tilt><img data-pic="coworking-01-desks-windows" alt="The bright co-working room"></div>
-              <p class="place__name mono">the co-working</p>
+              <p class="place__name mono">at the co-working</p>
             </article>
             <article class="place" data-color="#7aa83a">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> do absolutely <em>nothing.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> do absolutely <em>nothing</em></h3>
               <div class="place__media" data-tilt><img data-pic="property-14-garden-hammock-trees" alt="Hammocks between the trees in the garden"></div>
-              <p class="place__name mono">the garden</p>
+              <p class="place__name mono">at the garden</p>
             </article>
             <article class="place place--fire" data-color="#e0531f">
-              <h3 class="place__title display"><span class="sr-only">a place to</span> sit by the fire <em>with strangers.</em></h3>
+              <h3 class="place__title display"><span class="sr-only">let's</span> sit by the fire <em>with strangers</em></h3>
               <div class="place__media" data-tilt><img data-pic="connect-firepit-flames-sparks" alt="Flames and sparks rising from the fire pit at night"></div>
-              <p class="place__name mono"><i data-icon="fire"></i> the fire pit</p>
+              <p class="place__name mono"><i data-icon="fire"></i> at the fire pit</p>
             </article>
           </div>
           <div class="trail" aria-hidden="true">
@@ -224,7 +223,7 @@
 
       <div class="dinners">
         <div class="dinners__text">
-          <p class="eyebrow mono">loving dinners</p>
+          <p class="eyebrow mono">family dinners</p>
           <p class="quote display">“The warmth of a shared meal can't be replicated in a <em>virtual chat.</em>”</p>
           <p class="lede">One long table, one big pot and everyone around it: a starter, a soup, a main and dessert, cooked together with people you met that morning.</p>
         </div>
@@ -275,7 +274,7 @@
       <div class="numbers">
         <div class="numbers__stats">
           <p class="eyebrow mono">the house, in numbers</p>
-          <div class="stat"><b data-n="548">0</b><span>reviews from strangers</span></div>
+          <div class="stat"><b data-n="960">0</b><span>reviews from strangers</span></div>
           <div class="stat"><b data-n="9.9" data-d="1">0</b><span>on Hostelworld</span></div>
           <div class="stat"><b data-n="2351">0</b><span>metres to the summit</span></div>
           <div class="stat"><b data-n="10">0</b><span>minutes from the ferry</span></div>
@@ -363,15 +362,7 @@
             <span class="person__placeholder" role="img" aria-label="Stefan, photo coming soon"><b>S</b><small class="mono">photo soon</small></span>
           </div>
           <h3 class="person__name">Stefan</h3>
-          <p class="person__ask"><span class="mono">co-founder</span> One of the two strangers who opened this house to the world.</p>
-        </article>
-        <article class="person" data-tilt>
-          <div class="person__portrait">
-            <svg class="person__ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="ring-c" d="M100,100 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs><text><textPath href="#ring-c" textLength="534" lengthAdjust="spacing">SOPHIE · HOST · JOINED THE FAMILY · LOVING ·</textPath></text></svg>
-            <span class="person__placeholder" role="img" aria-label="Sophie, photo coming soon"><b>S</b><small class="mono">photo soon</small></span>
-          </div>
-          <h3 class="person__name">Sophie</h3>
-          <p class="person__ask"><span class="mono">a guest wrote</span> “Thanks to Stefan, Sophie and Pedro for the stay.”</p>
+          <p class="person__ask"><span class="mono">a guest wrote</span> “Because the island doesn't have Uber or Bolt, one of the owners, Stefan, picked us up from the airport.”</p>
         </article>
         <article class="person person--cats" data-tilt>
           <div class="person__portrait">
@@ -389,9 +380,10 @@
       <div class="reviews__fire" aria-hidden="true"><video src="media/video/dusk.mp4" poster="media/video/dusk.webp" muted loop playsinline preload="none" data-lazy-video></video></div>
       <header class="reviews__head">
         <p class="eyebrow mono">04 — strangers say</p>
-        <h2 id="reviews-title" class="display">What strangers say<br>around the <em>fire.</em></h2>
+        <h2 id="reviews-title" class="display">What strangers <em>say</em></h2>
       </header>
       <ul class="scores">
+        <li><a href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-magnetic data-cursor="open"><b data-count="5.0">5.0</b><span>/5</span><small class="mono">Google · 412 reviews ↗</small></a></li>
         <li><a href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-magnetic data-cursor="open"><b data-count="9.9">9.9</b><span>/10</span><small class="mono">Hostelworld · 55 reviews ↗</small></a></li>
         <li><a href="https://www.booking.com/hotel/pt/loving-strangers-hostel-madalena1.en-gb.html" target="_blank" rel="noopener" data-magnetic data-cursor="open"><b data-count="9.6">9.6</b><span>/10</span><small class="mono">Booking.com · 468 reviews ↗</small></a></li>
         <li><a href="https://www.tripadvisor.com/Hotel_Review-g735544-d25412428-Reviews-Loving_Strangers_Hostel-Madalena_Pico_Azores.html" target="_blank" rel="noopener" data-magnetic data-cursor="open"><b data-count="5.0">5.0</b><span>/5</span><small class="mono">Tripadvisor · 17 reviews ↗</small></a></li>
@@ -399,18 +391,22 @@
       </ul>
       <div class="flow" data-flow>
         <div class="flow__row" data-dir="1">
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>The one thing must do on Pico is stay at loving strangers!</q><span class="mono">Rob S. · Google</span></a>
           <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>Felt welcome and included the second I stepped in.</q><span class="mono">Riku, Finland · Hostelworld</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>Pick-up at the airport despite the 3-hour delay at 11 pm and ride in a cabrio watching the full moon and silhouette of Pico.</q><span class="mono">Kuba T. · Google</span></a>
           <a class="note" href="https://www.booking.com/hotel/pt/loving-strangers-hostel-madalena1.en-gb.html" target="_blank" rel="noopener" data-cursor="read"><q>The best hostel in all Azores! Really good vibes, loving hosts…</q><span class="mono">guest · Booking.com</span></a>
-          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>Pedro and Stefan are incredible hosts who made us feel right at home.</q><span class="mono">Baylee, USA · Hostelworld</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>5 stars isn't enough so here's 10. This is no ordinary hostel, they are building a community here and succeeding.</q><span class="mono">Leanne O. · Google</span></a>
           <a class="note" href="https://www.trip.com/hotels/madalena-hotel-detail-109960803/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>They have created what hostels should all be about — connecting people!</q><span class="mono">guest · Trip.com</span></a>
-          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>The best dorm beds ever, so cozy and so loving atmosphere.</q><span class="mono">Riku, Finland · Hostelworld</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>I came for the Pico mountain but found another reason to return to the island!</q><span class="mono">Iyad S. · Google</span></a>
         </div>
         <div class="flow__row" data-dir="-1">
-          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>The shared breakfast and occasional dinners make it very easy to connect with everyone else.</q><span class="mono">guest, Germany · Hostelworld</span></a>
-          <a class="note" href="https://www.tripadvisor.com/Hotel_Review-g735544-d25412428-Reviews-Loving_Strangers_Hostel-Madalena_Pico_Azores.html" target="_blank" rel="noopener" data-cursor="read"><q>Probably the best hostel in Pico.</q><span class="mono">review title · Tripadvisor</span></a>
-          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>Genuinely one of the best hostels I've ever stayed at.</q><span class="mono">Baylee, USA · Hostelworld</span></a>
-          <a class="note" href="https://www.trip.com/hotels/madalena-hotel-detail-109960803/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>Amazing place. Wonderful people.</q><span class="mono">Catherine, Canada · Trip.com</span></a>
-          <a class="note" href="https://www.tripadvisor.com/Hotel_Review-g735544-d25412428-Reviews-Loving_Strangers_Hostel-Madalena_Pico_Azores.html" target="_blank" rel="noopener" data-cursor="read"><q>Everyone is welcomed with love!</q><span class="mono">review title · Tripadvisor</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>Loving Strangers is not an accommodation like the others — it's an experience.</q><span class="mono">Daniel B. · Google</span></a>
+          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>Pedro and Stefan are incredible hosts who made us feel right at home.</q><span class="mono">Baylee, USA · Hostelworld</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>This must be my thirtieth hostel and by far my best experience.</q><span class="mono">Vincent T. · Google</span></a>
+          <a class="note" href="https://www.tripadvisor.com/Hotel_Review-g735544-d25412428-Reviews-Loving_Strangers_Hostel-Madalena_Pico_Azores.html" target="_blank" rel="noopener" data-cursor="read"><q>I spent five unforgettable weeks at Loving Strangers on Pico… so much more than just accommodation!</q><span class="mono">annahelener · Tripadvisor</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>Truly the friendliest place I've ever stayed.</q><span class="mono">Brock B. · Google</span></a>
+          <a class="note" href="https://www.hostelworld.com/hostels/p/320558/loving-strangers-hostel/" target="_blank" rel="noopener" data-cursor="read"><q>The best dorm beds ever, so cozy and so loving atmosphere.</q><span class="mono">Riku, Finland · Hostelworld</span></a>
+          <a class="note" href="https://maps.google.com/?cid=14960350978753098106" target="_blank" rel="noopener" data-cursor="read"><q>Simply the BEST hostel in the whole world!!!</q><span class="mono">Catherine F. · Google</span></a>
         </div>
       </div>
     </section>
@@ -419,7 +415,8 @@
     <section id="contact" class="contact" aria-labelledby="contact-title">
       <header class="contact__head">
         <p class="eyebrow mono">05 — find us</p>
-        <h2 id="contact-title" class="display">This is where the journey<br>becomes <em>yours.</em></h2>
+        <h2 id="contact-title" class="display"><em>Congratulations!</em></h2>
+        <p class="lede contact__lede">To show our appreciation for your precious time and attention, for reading until here and getting to know a bit more about us, we reward you with a 5% discount coupon to use on your reservation.</p>
       </header>
 
       <div class="pass" data-pass>
@@ -455,7 +452,7 @@
 
       <div class="arrive">
         <div class="arrive__col"><h3><i data-icon="boat"></i> by ferry</h3><p>From Faial (Horta) it's about 30 minutes by Atlânticoline ferry, and there are boats from São Jorge too. Madalena port is a 10 minute walk from our door.</p></div>
-        <div class="arrive__col"><h3><i data-icon="mountains"></i> by plane</h3><p>Pico airport (PIX) has direct flights from Lisbon, about 2.5 hours, and short hops from the other islands. Many travellers fly into Faial and take the ferry.</p></div>
+        <div class="arrive__col"><h3><i data-icon="mountains"></i> by plane</h3><p>Pico airport (PIX) has direct flights from Lisbon, about 2.5 hours, and short hops from the other islands. Many travellers fly into Faial and take the ferry. If you need a ride from the airport, let us know.</p></div>
         <div class="arrive__col"><h3><i data-icon="clock"></i> good to know</h3><p>Check-in 15:00–20:00 · check-out 11:00 · quiet hours 23:00–08:00 · adults 18+ · pets on request. Arriving late? <a href="https://wa.me/message/YYSGLP6X3SVEC1" target="_blank" rel="noopener">Message us</a>.</p></div>
       </div>
 
@@ -473,13 +470,12 @@
           </p>
         </address>
       </div>
-      <p class="mono postcard__small"><i data-icon="boat"></i> 10 min walk from the Madalena ferry · 30 min by boat from Faial<br><i data-icon="clock"></i> check-in 15:00–20:00 · check-out 11:00 · quiet hours 23:00–08:00</p>
     </section>
   </main>
 
   <footer class="foot">
-    <p class="mega" aria-hidden="true"><span>hello,</span> <em>stranger.</em></p>
-    <p class="mono">© 2026 Loving Strangers Hostel · <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener">Livro de Reclamações</a></p>
+    <p class="mega" aria-hidden="true"><span>see you soon</span> <em>stranger!</em></p>
+    <p class="mono">© 2026 Loving Strangers Hostel · AL licence 3977/RRAL · <a href="https://www.livroreclamacoes.pt/Inicio/" target="_blank" rel="noopener">Livro de Reclamações</a></p>
   </footer>
 
   <div class="toast mono" role="status" aria-live="polite" data-toast></div>

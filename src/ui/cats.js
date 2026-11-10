@@ -1,12 +1,12 @@
 // Three house cats follow your cursor, drawn in the same ink as the island.
 // They trot after it, sit down when it stops, and fall asleep if you leave them long enough.
 
-const INK = '#25261f';
-const CATS = [
-  { fill: '#fbb600', stripes: true, eye: INK },
-  { fill: '#fffdf6', stripes: false, eye: INK },
-  { fill: '#2b2c25', stripes: false, eye: '#fbb600' },
-];
+const INK = '#343631';
+// Pedro is choosing between three looks: ?cats=ink (default), ?cats=silhouette, ?cats=paws
+const STYLE = new URLSearchParams(location.search).get('cats') || 'ink';
+const CATS = STYLE === 'silhouette'
+  ? [{ fill: INK, stripes: false, eye: '#fbb600' }, { fill: INK, stripes: false, eye: '#fbb600' }, { fill: INK, stripes: false, eye: '#fbb600' }]
+  : [{ fill: '#fbb600', stripes: true, eye: INK }, { fill: '#fffdf6', stripes: false, eye: INK }, { fill: '#2b2c25', stripes: false, eye: '#fbb600' }];
 
 export function initCats({ audio, mobile }) {
   const canvas = document.getElementById('cats');
@@ -31,6 +31,8 @@ export function initCats({ audio, mobile }) {
     face: 1, phase: i * 1.7, still: 0, speed: 0, state: 'walk', tail: Math.random() * 6,
   }));
   const hearts = [];
+  const paws = [];
+  let lastPaw = { x: 0, y: 0 }, pawSide = 1;
 
   if (fine) {
     document.documentElement.classList.add('has-cats');
@@ -171,8 +173,31 @@ export function initCats({ audio, mobile }) {
       }
       if (fine && !mouse.inside) c.state = c.still > 1 ? 'sleep' : c.state;
     });
-    // draw back to front so the leader is on top
-    for (let i = cats.length - 1; i >= 0; i--) drawCat(cats[i], t);
+    if (STYLE === 'paws') {
+      // paw prints trail the cursor instead of cats, left and right in turn, fading away
+      const lead = cats[0];
+      if (Math.hypot(lead.x - lastPaw.x, lead.y - lastPaw.y) > 34) {
+        const a = Math.atan2(lead.y - lastPaw.y, lead.x - lastPaw.x);
+        pawSide = -pawSide;
+        paws.push({ x: lead.x + Math.cos(a + Math.PI / 2) * 9 * pawSide, y: lead.y + Math.sin(a + Math.PI / 2) * 9 * pawSide, a, t: 0 });
+        lastPaw = { x: lead.x, y: lead.y };
+      }
+      for (let i = paws.length - 1; i >= 0; i--) {
+        const pw = paws[i];
+        pw.t += dt;
+        if (pw.t > 1.8) { paws.splice(i, 1); continue; }
+        ctx.save();
+        ctx.translate(pw.x, pw.y); ctx.rotate(pw.a + Math.PI / 2); ctx.scale(scale, scale);
+        ctx.globalAlpha = 1 - pw.t / 1.8;
+        ctx.fillStyle = INK;
+        ctx.beginPath(); ctx.ellipse(0, 3, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+        [[-6, -4], [-2, -8], [2, -8], [6, -4]].forEach(([px, py]) => { ctx.beginPath(); ctx.ellipse(px, py, 2.2, 2.8, 0, 0, Math.PI * 2); ctx.fill(); });
+        ctx.restore();
+      }
+    } else {
+      // draw back to front so the leader is on top
+      for (let i = cats.length - 1; i >= 0; i--) drawCat(cats[i], t);
+    }
 
     for (let i = hearts.length - 1; i >= 0; i--) {
       const h = hearts[i];

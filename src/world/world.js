@@ -2,29 +2,41 @@ import * as THREE from 'three';
 import { NOISE, FOG } from './glsl.js';
 import { heightAt, HOSTEL, FAIAL } from './terrain.js';
 
-// "The island, drawn in ink". A Three.js world rendered as a living illustration:
-// contour lines, hatching and marker-yellow, in the style of the hostel's own tile artwork.
+// Pico in colour with a hand-drawn soul: real sky, sea and slopes, outlined lightly in ink,
+// and drawn onto paper as you arrive.
 
 const hex = (h) => {
   const n = parseInt(h.slice(1), 16);
   return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 };
 
-// time of day 0..3: dawn, day, golden hour, dusk. Night is a separate ink-bleed layer.
+// time of day 0..3: dawn, day, golden hour, dusk. Night is graded on top in the post pass.
 const DAY = [
-  { paper: '#f5e6cf', shade: '#e2cbac', ink: '#29291f', yel: '#f8b21a', sun: [0.55, 0.16, -0.82] },
-  { paper: '#f5eedf', shade: '#e2d7c0', ink: '#25261f', yel: '#fbb600', sun: [0.35, 0.82, 0.45] },
-  { paper: '#f7e3bd', shade: '#e3c393', ink: '#2a2520', yel: '#fba600', sun: [-0.86, 0.18, 0.47] },
-  { paper: '#efcfae', shade: '#cfa98a', ink: '#2a2321', yel: '#f6941a', sun: [-0.97, 0.02, 0.24] },
-].map((k) => ({
-  paper: hex(k.paper), shade: hex(k.shade), ink: hex(k.ink), yel: hex(k.yel),
-  sun: new THREE.Vector3(...k.sun).normalize(),
-}));
-const NIGHT = { paper: hex('#1b1c19'), shade: hex('#111210'), ink: hex('#f1e5c6'), yel: hex('#f6b21c') };
+  { top: '#5f9bd3', bot: '#dfe6e6', sunCol: '#ffe2bc', sun: [0.55, 0.22, -0.82] },
+  { top: '#4a95d4', bot: '#cde6f4', sunCol: '#fff6e6', sun: [0.35, 0.82, 0.45] },
+  { top: '#5d93c8', bot: '#f6cf95', sunCol: '#ffcf8a', sun: [-0.86, 0.18, 0.47] },
+  { top: '#4a5f94', bot: '#f19f6e', sunCol: '#ffa060', sun: [-0.97, 0.02, 0.24] },
+].map((k) => ({ top: hex(k.top), bot: hex(k.bot), sunCol: hex(k.sunCol), sun: new THREE.Vector3(...k.sun).normalize() }));
+const PAPER = hex('#e6ecd6');
+const INK = hex('#343631');
 
 const FULLSCREEN_VERT = /* glsl */ `
 varying vec2 vUv;
 void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }
+`;
+
+// shared lighting and atmosphere for every surface
+const LIGHT = /* glsl */ `
+uniform vec3 uSun; uniform vec3 uSunCol; uniform vec3 uSkyTop; uniform vec3 uSkyBot;
+vec3 shade(vec3 base, vec3 n){
+  float ndl = max(dot(n, uSun), 0.) * smoothstep(-.12, .06, uSun.y);
+  vec3 ambient = mix(uSkyBot, uSkyTop, .5 + .5 * n.y) * .55 + .12;
+  return base * (ambient + uSunCol * ndl * .95);
+}
+vec3 haze(vec3 col, vec3 w){
+  float d = distance(w, uCam);
+  return mix(col, uSkyBot, smoothstep(1800., 11000., d) * .78);
+}
 `;
 
 const TERRAIN_VERT = /* glsl */ `
@@ -38,49 +50,36 @@ void main(){
 const TERRAIN_FRAG = /* glsl */ `
 ${NOISE}
 ${FOG}
-uniform vec3 uSun; uniform float uPx;
+${LIGHT}
 varying vec3 vW; varying vec3 vN;
 void main(){
   vec3 n = normalize(vN);
-  float ndl = dot(n, uSun);
-  float lit = smoothstep(-.1, .32, ndl) * smoothstep(-.12, .05, uSun.y);
-  float shade = 1. - lit;
   float h = vW.y;
-  float ink = 0., yel = 0., light = mix(.5, 1., lit);
-  vec2 sp = gl_FragCoord.xy / uPx;
+  float nz = fbm(vW.xz * .006) - .5;
+  float hh = h + nz * 60.;
+  // Pico from the sea up: black lava shore, green fields and vines, dark woods, brown scrub, bare lava cone
+  vec3 col = vec3(.24, .23, .22);
+  col = mix(col, vec3(.44, .58, .30), smoothstep(2., 8., h));
+  col = mix(col, vec3(.29, .44, .23), smoothstep(50., 130., hh));
+  col = mix(col, vec3(.40, .34, .26), smoothstep(170., 270., hh));
+  col = mix(col, vec3(.22, .19, .18), smoothstep(330., 450., hh));
+  col *= .9 + .2 * vnoise(vW.xz * .05);
+  // steep faces show bare rock
+  col = mix(col, vec3(.30, .28, .27), smoothstep(.55, .3, n.y) * smoothstep(20., 60., h));
 
-  // contour lines: thin every ~100 m, bold every ~500 m
-  float c = inkLine(h / 26., .5) * .55 + inkLine(h / 130., .95);
-  ink = max(ink, min(c, 1.) * smoothstep(6., 14., h) * .9);
-
-  // hatching in the shadows, crossed where it is darkest
-  float hs = 6.5;
-  float h1 = 1. - smoothstep(.3, 1., abs(fract((sp.x + sp.y) / hs) - .5) * hs);
-  float h2 = 1. - smoothstep(.3, 1., abs(fract((sp.x - sp.y * .6) / hs) - .5) * hs);
-  float gap = step(.32, vnoise(vec2((sp.x - sp.y) / 9., (sp.x + sp.y) / 2.5)));
-  ink = max(ink, h1 * gap * smoothstep(.5, .85, shade) * .75);
-  ink = max(ink, h2 * smoothstep(.93, 1., shade) * .55);
-
-  // marker-yellow strokes on the sunny side, denser up high (the tile's mountain is yellow)
-  vec2 sd = vec2(dot(sp, vec2(.83, -.56)), dot(sp, vec2(.56, .83)));
-  float strokes = vnoise(vec2(sd.x / 3.2, sd.y / 140.)) * .7 + vnoise(vW.xz * .004) * .3;
-  float want = lit * smoothstep(60., 420., h);
-  yel = smoothstep(.6, .64, strokes + want * .5) * smoothstep(40., 110., h);
-
-  // UNESCO vineyards: the lattice of black basalt walls (currais) on the low western slopes
+  // UNESCO vineyards: a lattice of black basalt walls on the low western slopes
   vec2 v = vW.xz + vec2(vnoise(vW.xz * .02), vnoise(vW.xz * .02 + 9.)) * 6.;
   float walls = max(inkLine(v.x / 13., .7), inkLine(v.y / 10., .7));
   float vineZone = smoothstep(4., 9., h) * (1. - smoothstep(55., 80., h)) * smoothstep(-1150., -1450., vW.x) * smoothstep(-260., -420., vW.z);
-  ink = max(ink, walls * vineZone * .28 * step(.35, vnoise(vW.xz * .045)));
-  yel *= 1. - vineZone * .6;
+  col = mix(col, vec3(.16, .15, .15), walls * vineZone * .65);
 
-  // the shoreline: one confident line, plus a broken second one like a wave pulling back
-  ink = max(ink, 1. - smoothstep(.3, 1.4, abs(h - .9) / max(fwidth(h), 1e-3) * .5));
-  float wash = (1. - smoothstep(.3, 1.1, abs(h - 3.2) / max(fwidth(h), 1e-3) * .5)) * step(.5, vnoise(vW.xz * .05));
-  ink = max(ink, wash * .7);
-
-  float f = fogFade(vW);
-  gl_FragColor = vec4(ink * f, yel * f, mix(1., light, f), 1.);
+  col = shade(col, n);
+  // a faint contour every ~100 m keeps a touch of the hand-drawn map
+  col *= 1. - inkLine(h / 26., .5) * .12 * smoothstep(10., 30., h);
+  // white surf where the land meets the sea
+  float surf = 1. - smoothstep(.2, 1.6, abs(h - 1.) / max(fwidth(h), 1e-3) * .45);
+  col = mix(col, vec3(.95), surf * .8);
+  gl_FragColor = vec4(haze(col, vW), 1.);
 }`;
 
 const OCEAN_VERT = /* glsl */ `
@@ -102,7 +101,8 @@ void main(){
 const OCEAN_FRAG = /* glsl */ `
 ${NOISE}
 ${FOG}
-uniform vec3 uSun; uniform vec2 uFwd; uniform float uTime;
+${LIGHT}
+uniform vec2 uFwd; uniform float uTime;
 varying vec3 vW; varying vec3 vN;
 float lineSet(float coord, float s, float across){
   float idx = floor(coord / s + .5);
@@ -110,22 +110,26 @@ float lineSet(float coord, float s, float across){
   return inkLine(coord / s, .55) * dash;
 }
 void main(){
+  vec3 n = normalize(vN);
+  vec3 view = normalize(vW - uCam);
+  // Atlantic blue that picks up the sky toward the horizon
+  float fres = pow(1. - max(dot(-view, n), 0.), 3.);
+  vec3 col = mix(vec3(.07, .26, .42), vec3(.13, .40, .58), smoothstep(-1., 1.5, vW.y));
+  col = mix(col, mix(uSkyBot, uSkyTop, .35), fres * .75);
+  col *= .8 + .35 * max(dot(n, uSun), 0.);
+  // light wave lines, like the drawing's sea but in foam
   float along = dot(vW.xz, uFwd);
   float across = dot(vW.xz, vec2(-uFwd.y, uFwd.x));
   float coord = along / 6. + vW.y * .8;
   float lod = max(0., log2(fwidth(coord) * 10.));
   float l0 = floor(lod), fl = fract(lod);
   float line = mix(lineSet(coord, exp2(l0), across), lineSet(coord, exp2(l0 + 1.), across), fl);
-
-  vec3 view = normalize(vW - uCam);
-  vec3 r = reflect(view, normalize(vN));
-  float glint = pow(max(dot(r, uSun), 0.), 18.) * smoothstep(-.05, .1, uSun.y);
-  float thick = mix(lineSet(coord * .5, exp2(l0), across * .6), lineSet(coord * .5, exp2(l0 + 1.), across * .6), fl);
-  float yel = smoothstep(.08, .35, glint) * thick;
-
-  float f = fogFade(vW);
-  float ink = line * (1. - yel) * .85;
-  gl_FragColor = vec4(ink * f, yel * f, .93 + .07 * (1. - f), 1.);
+  col = mix(col, vec3(.86, .93, .97), line * .22);
+  // the sun's path on the water
+  vec3 r = reflect(view, n);
+  float glint = pow(max(dot(r, uSun), 0.), 60.) * smoothstep(-.05, .1, uSun.y);
+  col += uSunCol * glint * 1.4;
+  gl_FragColor = vec4(haze(col, vW), 1.);
 }`;
 
 const SKY_VERT = /* glsl */ `
@@ -138,12 +142,12 @@ void main(){
 
 const SKY_FRAG = /* glsl */ `
 ${NOISE}
-uniform vec3 uSun; uniform vec3 uMoon; uniform float uTime; uniform float uNight;
+uniform vec3 uSun; uniform vec3 uSunCol; uniform vec3 uSkyTop; uniform vec3 uSkyBot; uniform vec3 uMoon; uniform float uTime; uniform float uNight;
 varying vec3 vDir;
-// a sun in the style of the logo: a disc with fifteen rounded rays, outlined in ink
-void body(vec3 d, vec3 s, float R, bool rays, inout float ink, inout float yel, bool crescent){
+// the logo's sun: a disc with fifteen rounded rays
+float sunShape(vec3 d, vec3 s, float R, bool rays, bool crescent){
   float facing = dot(d, s);
-  if (facing <= .6) return;
+  if (facing <= .6) return 1e3;
   vec3 t1 = normalize(cross(s, vec3(0., 1., 0.)));
   vec3 t2 = cross(t1, s);
   vec2 q = vec2(dot(d, t1), dot(d, t2)) / facing;
@@ -157,31 +161,37 @@ void body(vec3 d, vec3 s, float R, bool rays, inout float ink, inout float yel, 
     float ac = ai * sector;
     vec2 p = mat2(cos(ac), -sin(ac), sin(ac), cos(ac)) * q2;
     float a0 = R * 1.32, a1 = a0 + R * mix(.55, .95, hash12(vec2(ai, 3.)));
-    p.y += sin(p.x * 30.) * R * .03;
     float ray = length(p - vec2(clamp(p.x, a0, a1), 0.)) - R * .13;
     sdf = min(sdf, ray);
   }
-  float fw = fwidth(sdf);
-  yel = max(yel, 1. - smoothstep(-fw, fw, sdf));
-  ink = max(ink, 1. - smoothstep(fw * .7, fw * 2.1, abs(sdf)));
+  return sdf;
 }
 void main(){
   vec3 d = normalize(vDir);
-  float light = 1. - .2 * smoothstep(.0, .75, d.y);
-  float ink = 0., yel = 0.;
-  if (uNight < .5) body(d, uSun, .058, true, ink, yel, false);
+  vec3 col = mix(uSkyBot, uSkyTop, smoothstep(-.02, .55, d.y));
+  // warm glow around the sun
+  col += uSunCol * pow(max(dot(d, uSun), 0.), 24.) * .35 * (1. - uNight);
+  if (uNight < .5) {
+    float s = sunShape(d, uSun, .05, true, false);
+    float fw = fwidth(s);
+    col = mix(col, vec3(.984, .714, 0.), 1. - smoothstep(-fw, fw, s));
+  }
+  // night: deep blue, a crescent moon and stars
+  vec3 nightSky = mix(vec3(.10, .14, .26), vec3(.03, .05, .12), smoothstep(-.02, .6, d.y));
+  col = mix(col, nightSky, uNight);
   if (uNight > .01) {
-    body(d, uMoon, .045, false, ink, yel, true);
+    float m = sunShape(d, uMoon, .045, false, true);
+    float fw = fwidth(m);
+    col = mix(col, vec3(.98, .92, .72), (1. - smoothstep(-fw, fw, m)) * uNight);
     vec3 g = d * 70.;
     vec3 cell = floor(g);
     vec3 f = fract(g) - .5;
     float hs = hash13(cell);
     float tw = .6 + .4 * sin(uTime * (1. + hs * 3.) + hs * 40.);
     float star = (1. - smoothstep(.0, .09 * hs, length(f))) * step(.9, hs);
-    float spark = (1. - smoothstep(.0, .025, min(abs(f.x), abs(f.y)) * 1.)) * (1. - smoothstep(.1, .3, length(f))) * step(.985, hs);
-    ink = max(ink, max(star, spark) * tw * smoothstep(.03, .15, d.y) * uNight);
+    col += vec3(1.) * star * tw * smoothstep(.03, .15, d.y) * uNight;
   }
-  gl_FragColor = vec4(ink, yel, light, 1.);
+  gl_FragColor = vec4(col, 1.);
 }`;
 
 const CLOUD_VERT = /* glsl */ `
@@ -198,6 +208,7 @@ void main(){
 const CLOUD_FRAG = /* glsl */ `
 ${NOISE}
 ${FOG}
+${LIGHT}
 varying vec2 vUv; varying float vSeed; varying vec3 vW;
 void main(){
   vec2 p = (vUv * 2. - 1.) * vec2(2., 1.);
@@ -209,15 +220,14 @@ void main(){
     d = min(d, length(p - c) - r);
   }
   d = max(d, -(p.y + .55));
+  d += (vnoise(p * 6. + vSeed * 20.) - .5) * .06;
   float fw = fwidth(d);
   if (d > fw) discard;
-  float ink = 1. - smoothstep(fw * .4, fw * 1.3, abs(d));
-  // little curls inside, like the tile's clouds
-  float curl = 1. - smoothstep(fw * .5, fw * 1.6, abs(length(p - vec2(-.2 + vSeed, .15)) - .28));
-  curl *= step(p.y, .15 + .1) * step(.15 - .28, p.y) * step(p.x, -.2 + vSeed + .05);
-  ink = max(ink, curl * .8);
-  float f = fogFade(vW);
-  gl_FragColor = vec4(ink * f, 0., 1., 1.);
+  // white tops, cool grey bellies, a warm rim on the sun side
+  vec3 col = mix(mix(uSkyTop, vec3(.72, .76, .82), .6), vec3(1.), smoothstep(-.6, .5, p.y));
+  col = mix(col, col * uSunCol * 1.1, .35);
+  col *= 1. - (1. - smoothstep(fw * .4, fw * 1.3, abs(d))) * .18;
+  gl_FragColor = vec4(haze(col, vW), 1.);
 }`;
 
 const WHALE_VERT = /* glsl */ `
@@ -233,13 +243,13 @@ void main(){
 const WHALE_FRAG = /* glsl */ `
 ${NOISE}
 ${FOG}
+${LIGHT}
 uniform float uTime;
 varying vec2 vP; varying vec3 vW;
 float ellipse(vec2 p, vec2 c, vec2 r, float a){ p -= c; p = mat2(cos(a), -sin(a), sin(a), cos(a)) * p; return (length(p / r) - 1.) * min(r.x, r.y); }
 void main(){
   if (vW.y < .2) discard;
   vec2 p = vP;
-  // a sperm whale's fluke: two lobes on a tapering stalk, notch in the middle
   float lobeL = ellipse(p, vec2(-.43, .5), vec2(.5, .15), -.38);
   float lobeR = ellipse(p, vec2(.43, .5), vec2(.5, .15), .38);
   float w = mix(.07, .16, smoothstep(.4, -1., p.y));
@@ -247,12 +257,10 @@ void main(){
   float d = min(min(lobeL, lobeR), stalk);
   d = max(d, -(length(p - vec2(0., .66)) - .06));
   float fw = fwidth(d);
-  // water pouring off the tail edge
   float drip = step(.6, vnoise(vec2(p.x * 18., p.y * 3. + uTime * 6.))) * step(abs(p.x), .9) * step(p.y, .4) * step(-.4, p.y) * (1. - step(.5, abs(p.x) - .1));
   if (d > fw && drip < .5) discard;
-  float body = 1. - smoothstep(-fw, fw, d);
-  float ink = max(body * .92, drip * .7);
-  gl_FragColor = vec4(ink * fogFade(vW), 0., 1., 1.);
+  vec3 col = d > fw ? vec3(.85, .92, .97) : vec3(.17, .19, .22) * (.8 + .4 * smoothstep(-.6, .6, p.y));
+  gl_FragColor = vec4(haze(col, vW), 1.);
 }`;
 
 const HOUSE_VERT = /* glsl */ `
@@ -267,25 +275,22 @@ void main(){
 const HOUSE_FRAG = /* glsl */ `
 ${NOISE}
 ${FOG}
-uniform vec3 uSun; uniform float uRoofYellow; uniform float uPx;
+${LIGHT}
+uniform float uRoofYellow;
 varying vec3 vW; varying vec3 vN;
 void main(){
   vec3 n = normalize(vN);
-  float lit = smoothstep(-.1, .3, dot(n, uSun));
-  vec2 sp = gl_FragCoord.xy / uPx;
-  float hatch = 1. - smoothstep(.4, 1.2, abs(fract((sp.x + sp.y) / 4.) - .5) * 4.);
   float roof = step(.5, n.y);
-  float ink = mix(hatch * (1. - lit) * .8, (1. - uRoofYellow) * .85, roof);
-  float yel = roof * uRoofYellow;
-  float f = fogFade(vW);
-  gl_FragColor = vec4(ink * f, yel * f, mix(.75, 1., lit), 1.);
+  // white walls and terracotta roofs, like Madalena; the hostel's roof is the yellow one
+  vec3 base = mix(vec3(.93, .92, .88), mix(vec3(.66, .30, .20), vec3(.984, .714, 0.), uRoofYellow), roof);
+  gl_FragColor = vec4(haze(shade(base, n), vW), 1.);
 }`;
 
 const POST_FRAG = /* glsl */ `
 ${NOISE}
 uniform sampler2D tCol; uniform sampler2D tDepth;
 uniform vec2 uRes; uniform float uTime; uniform float uNear; uniform float uFar; uniform float uPx; uniform float uNight;
-uniform vec3 pPaper, pShade, pInk, pYel, nPaper, nShade, nInk, nYel;
+uniform vec3 uPaper, uInk;
 uniform float uDraw;
 varying vec2 vUv;
 float invDepth(vec2 uv){
@@ -293,41 +298,41 @@ float invDepth(vec2 uv){
   return (uFar + uNear - z * (uFar - uNear)) / (2. * uNear * uFar);
 }
 void main(){
-  // line boil: the drawing re-traces itself 8 times a second, like a hand-drawn film
-  float tick = floor(uTime * 8.);
-  vec2 jit = vec2(vnoise(vUv * uRes / (70. * uPx) + tick * 17.3), vnoise(vUv * uRes / (70. * uPx) + tick * 9.1 + 40.)) - .5;
-  vec2 uv = vUv + jit * 1.7 * uPx / uRes;
-  vec4 s = texture2D(tCol, uv);
+  vec2 uv = vUv;
+  vec3 col = texture2D(tCol, uv).rgb;
+  float isSky = step(.99999, texture2D(tDepth, uv).x);
 
-  vec2 px = 1.3 * uPx / uRes;
-  float wc = invDepth(uv);
-  float lap = abs(invDepth(uv - vec2(px.x, 0.)) + invDepth(uv + vec2(px.x, 0.)) - 2. * wc)
-            + abs(invDepth(uv - vec2(0., px.y)) + invDepth(uv + vec2(0., px.y)) - 2. * wc);
-  float edge = smoothstep(.08, .22, lap / wc);
-  float ink = max(s.r, edge);
+  // fine ink outlines from depth: the hand-drawn soul, kept light
+  float tick = floor(uTime * 8.);
+  vec2 jit = (vec2(vnoise(vUv * uRes / (70. * uPx) + tick * 17.3), vnoise(vUv * uRes / (70. * uPx) + tick * 9.1 + 40.)) - .5) * uPx / uRes;
+  vec2 px = 1.2 * uPx / uRes;
+  vec2 ue = uv + jit;
+  float wc = invDepth(ue);
+  float lap = abs(invDepth(ue - vec2(px.x, 0.)) + invDepth(ue + vec2(px.x, 0.)) - 2. * wc)
+            + abs(invDepth(ue - vec2(0., px.y)) + invDepth(ue + vec2(0., px.y)) - 2. * wc);
+  float edge = smoothstep(.08, .25, lap / wc) * .55;
+
+  // night: everything below the sky sinks into moonlit blue, spreading like ink through paper
   vec2 asp = vUv * vec2(uRes.x / uRes.y, 1.);
+  float bleed = fbm(asp * 2.6) * .8 + vnoise(asp * 24.) * .2;
+  float m = smoothstep(bleed - .05, bleed + .05, uNight * 1.25 - .12);
+  vec3 moonlit = col * vec3(.22, .27, .42) + vec3(.01, .02, .05);
+  col = mix(col, moonlit, m * (1. - isSky));
+  col = mix(col, uInk, edge * (1. - m * .6));
+
+  // the island draws itself onto the paper: outlines first, then the colour
   if (uDraw < .999) {
     float n = fbm(asp * 5.) * .5 + distance(vUv, vec2(.5, .62)) * 1.1 + vnoise(asp * 60.) * .08;
     float k = uDraw * 1.9;
-    ink *= smoothstep(n - .05, n + .01, k);
-    s.g *= smoothstep(n - .05, n + .01, k - .45);
-    s.b = mix(1., s.b, smoothstep(n - .05, n + .01, k - .65));
+    float lines = smoothstep(n - .05, n + .01, k);
+    float paint = smoothstep(n - .05, n + .01, k - .5);
+    vec3 sketch = mix(uPaper, uInk, edge * 1.6 * lines);
+    col = mix(sketch, col, paint);
   }
 
-  vec3 day = mix(mix(pShade, pPaper, s.b), pYel, s.g);
-  day = mix(day, pInk, ink);
-  vec3 night = mix(mix(nShade, nPaper, s.b), nYel, s.g * .9);
-  night = mix(night, nInk, ink * .9);
-
-  // day turns to night like ink soaking through paper
-  float bleed = fbm(asp * 2.6) * .8 + vnoise(asp * 24.) * .2;
-  float m = smoothstep(bleed - .05, bleed + .05, uNight * 1.25 - .12);
-  vec3 col = mix(day, night, m);
-
-  float grain = (vnoise(vUv * uRes / (2.2 * uPx)) - .5) * .045 + (hash12(vUv * uRes) - .5) * .03;
-  float fibre = (vnoise(vec2(asp.x * 9., asp.y * 140.)) - .5) * .018;
-  col *= 1. + grain + fibre;
-  col *= mix(1., .88, smoothstep(.5, 1.2, length(vUv - .5) * 1.5));
+  float grain = (vnoise(vUv * uRes / (2.2 * uPx)) - .5) * .03 + (hash12(vUv * uRes) - .5) * .02;
+  col *= 1. + grain;
+  col *= mix(1., .9, smoothstep(.5, 1.2, length(vUv - .5) * 1.5));
   gl_FragColor = vec4(col, 1.);
 }`;
 
@@ -355,6 +360,9 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     uCam: { value: camera.position },
     uPx: { value: px },
     uNight: { value: 0 },
+    uSunCol: { value: DAY[0].sunCol.clone() },
+    uSkyTop: { value: DAY[0].top.clone() },
+    uSkyBot: { value: DAY[0].bot.clone() },
   };
 
   // terrain: Pico in detail, Faial in the distance
@@ -476,8 +484,7 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     tCol: { value: target.texture }, tDepth: { value: target.depthTexture },
     uRes: { value: new THREE.Vector2(2, 2) }, uTime: uniforms.uTime, uNight: uniforms.uNight, uPx: uniforms.uPx,
     uNear: { value: camera.near }, uFar: { value: camera.far },
-    pPaper: { value: new THREE.Vector3() }, pShade: { value: new THREE.Vector3() }, pInk: { value: new THREE.Vector3() }, pYel: { value: new THREE.Vector3() },
-    nPaper: { value: NIGHT.paper }, nShade: { value: NIGHT.shade }, nInk: { value: NIGHT.ink }, nYel: { value: NIGHT.yel },
+    uPaper: { value: PAPER }, uInk: { value: INK },
     uDraw: { value: 1 },
   };
   const postScene = new THREE.Scene();
@@ -497,10 +504,9 @@ export async function createWorld(canvas, { mobile = false } = {}) {
     const t = Math.min(DAY.length - 1.0001, Math.max(0, tod));
     const i = Math.floor(t), f = t - i;
     const a = DAY[i], b = DAY[i + 1];
-    postUniforms.pPaper.value.lerpVectors(a.paper, b.paper, f);
-    postUniforms.pShade.value.lerpVectors(a.shade, b.shade, f);
-    postUniforms.pInk.value.lerpVectors(a.ink, b.ink, f);
-    postUniforms.pYel.value.lerpVectors(a.yel, b.yel, f);
+    uniforms.uSkyTop.value.lerpVectors(a.top, b.top, f);
+    uniforms.uSkyBot.value.lerpVectors(a.bot, b.bot, f);
+    uniforms.uSunCol.value.lerpVectors(a.sunCol, b.sunCol, f);
     uniforms.uSun.value.lerpVectors(a.sun, b.sun, f).normalize();
   }
 

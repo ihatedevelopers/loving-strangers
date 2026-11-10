@@ -93,8 +93,8 @@ export function initJourney({ mobile }) {
     const rise = smooth(clamp01((p - 0.16) / 0.22));
     const swell = clamp01((p - 0.4) / 0.18);
     sunrise.style.transform = `translate(-50%, -50%) scale(${rise}) rotate(${p * 160}deg)`;
-    // the disc must outgrow the screen's diagonal
-    const discPx = sunrise.offsetWidth * 0.52;
+    // the heart must outgrow the screen's diagonal (its rounded body is about a third of its width)
+    const discPx = sunrise.offsetWidth * 0.28 * 0.34;
     disc.style.transform = `scale(${1 + swell * swell * (Math.hypot(innerWidth, innerHeight) / Math.max(1, discPx))})`;
     mark.style.opacity = 1 - clamp01(swell * 2.2);
     // the yellow cools into paper, and the island is drawn on it
@@ -179,7 +179,7 @@ export function initJourney({ mobile }) {
       const i = Math.min(placeEls.length - 1, Math.floor(p * placeEls.length));
       if (i !== tinted) {
         tinted = i;
-        stage.style.backgroundColor = `color-mix(in srgb, ${placeEls[i].dataset.color} 13%, #f5eedf)`;
+        stage.style.backgroundColor = `color-mix(in srgb, ${placeEls[i].dataset.color} 13%, #e6ecd6)`;
       }
     };
     walk(0);
@@ -239,7 +239,7 @@ export function initJourney({ mobile }) {
   ScrollTrigger.create({
     start: 0, end: 'max',
     onUpdate: (st) => {
-      friendsN.textContent = Math.round(smooth(st.progress) * 548);
+      friendsN.textContent = Math.round(smooth(st.progress) * 960);
       friendsDot.style.bottom = `calc(${st.progress * 100}% - 5px)`;
     },
   });

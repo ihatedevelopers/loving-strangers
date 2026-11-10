@@ -3,7 +3,7 @@
 
 export const H = 600;
 export const METERS_PER_UNIT = 2351 / H;
-export const PICO_R = 1750;
+export const PICO_R = 1500;
 export const FAIAL = { x: -5900, z: 700, r: 2000, h: 270 };
 export const HOSTEL = { x: -1905, z: 40 };
 
@@ -45,7 +45,8 @@ function spineDist(x, z) {
 
 export function heightAt(x, z) {
   const r = Math.hypot(x, z * 1.04);
-  let h = H * Math.pow(Math.max(0, 1 - r / PICO_R), 1.5);
+  // Pico's flanks are almost straight and steep: a near-perfect cone, slightly concave at the foot
+  let h = H * Math.pow(Math.max(0, 1 - r / PICO_R), 1.18);
 
   // Piquinho: the small steep cone on top of the crater.
   h += 42 * Math.pow(Math.max(0, 1 - Math.hypot(x + 10, z - 8) / 60), 1.2);

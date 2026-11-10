@@ -3,11 +3,12 @@ import { readFileSync } from 'node:fs';
 
 // <img data-pic="name" alt="..."> becomes a responsive, lazy, size-reserved WebP image.
 function pictures() {
-  const manifest = JSON.parse(readFileSync(new URL('./public/media/manifest.json', import.meta.url)));
-  const byName = Object.fromEntries(manifest.map((m) => [m.file, m]));
   return {
     name: 'pictures',
     transformIndexHtml(html) {
+      // read the manifest on every pass so new photos work without restarting the dev server
+      const manifest = JSON.parse(readFileSync(new URL('./public/media/manifest.json', import.meta.url)));
+      const byName = Object.fromEntries(manifest.map((m) => [m.file, m]));
       return html.replace(/<img data-pic="([^"]+)"([^>]*)>/g, (_, name, rest) => {
         const m = byName[name];
         if (!m) throw new Error(`unknown picture: ${name}`);
