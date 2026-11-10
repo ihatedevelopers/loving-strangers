@@ -1,7 +1,7 @@
-import { HOUSE_CATS, drawHouseCat } from './house-cats.js';
+import { createResidents } from './residents.js';
 
-// Three house cats follow your cursor.
-// They trot after it, sit down when it stops, and fall asleep if you leave them long enough.
+// The hostel's cats (default): each lives in its own corner of the page and minds its own business.
+// The older looks (?cats=ink|silhouette|paws) still trail the cursor.
 
 const INK = '#343631';
 // The hostel's real cats by default (?cats=house); older looks stay available: ?cats=ink, ?cats=silhouette, ?cats=paws
@@ -27,18 +27,17 @@ export function initCats({ audio, mobile }) {
 
   const scale = mobile ? 0.8 : 1;
   const mouse = { x: W * 0.5, y: H * 0.72, inside: fine, hover: 0, hoverGoal: 0, down: 0 };
-  const looks = STYLE === 'house' ? HOUSE_CATS : CATS;
+  const looks = CATS;
   const cats = looks.slice(0, mobile ? 2 : 3).map((look, i) => ({
     ...look, look,
     x: W * 0.5 - 60 - i * 55, y: H + 40, vx: 0, vy: 0,
     face: 1, phase: i * 1.7, still: 0, speed: 0, state: 'walk', tail: Math.random() * 6,
     seed: Math.random() * 10, blink: 1, blinkT: 1 + Math.random() * 4, twitch: 0, pounce: null,
   }));
-  const catScale = STYLE === 'house' ? 1.1 : 1;
-  // the lead cat hunts the cursor: a fast flick then a sudden stop makes it crouch, wiggle and pounce
-  const hunt = { px: 0, py: 0, energy: 0, calm: 0, cooldown: 3 };
+  const catScale = 1;
   const hearts = [];
   const paws = [];
+  const residents = STYLE === 'house' ? createResidents({ audio, mobile, hearts }) : null;
   let lastPaw = { x: 0, y: 0 }, pawSide = 1;
 
   if (fine) {
@@ -51,6 +50,7 @@ export function initCats({ audio, mobile }) {
     document.addEventListener('pointerleave', () => { mouse.inside = false; });
     addEventListener('pointerdown', () => {
       mouse.down = 1;
+      if (residents) return;
       const c = cats[0];
       if (Math.hypot(c.x - mouse.x, c.y - mouse.y) < 90) {
         hearts.push({ x: c.x + c.face * 18 * scale, y: c.y - 44 * scale, t: 0 });
@@ -143,41 +143,6 @@ export function initCats({ audio, mobile }) {
     ctx.restore();
   }
 
-  // ---------- the page is their house: tops of headings, photos and cards are ledges ----------
-  const perchMode = STYLE === 'house' && fine;
-  const PERCHES = '.display, .room__name, .room__media, .place__media, .postcard, .pass__main, .stop, .note, .person__portrait, .guestbook, .drone__frame, .dinners__stack, .arrive__col, .stat, .scores li, .statement';
-  const visible = new Set();
-  if (perchMode) {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target))));
-    document.querySelectorAll(PERCHES).forEach((el) => io.observe(el));
-  }
-  const FLOOR = { floor: true };
-  const rectOf = (el) => (el === FLOOR ? { left: 0, right: W, top: H - 4 } : el.getBoundingClientRect());
-  const usable = (el, r) => r.width > 90 && r.top > 70 && r.top < H - 24 && el.style.visibility !== 'hidden' && getComputedStyle(el).opacity > 0.3;
-  // the closest ledge right under the cursor, or the floor
-  function ledgeAt(x, y) {
-    // inside an element: the cats climb onto that one (the smallest, so a photo beats its section);
-    // otherwise they take the nearest edge just below the cursor
-    let inside = null, insideArea = Infinity, below = FLOOR, bestDy = Infinity;
-    for (const el of visible) {
-      const r = el.getBoundingClientRect();
-      if (x < r.left - 6 || x > r.right + 6 || !usable(el, r)) continue;
-      if (y >= r.top - 48 && y <= r.bottom) {
-        const area = r.width * r.height;
-        if (area < insideArea) { insideArea = area; inside = el; }
-      } else if (r.top > y && r.top - y < bestDy) { bestDy = r.top - y; below = el; }
-    }
-    return inside || below;
-  }
-  const span = (el) => { const r = rectOf(el); return [Math.max(24, r.left + 24), Math.min(W - 24, r.right - 24)]; };
-  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  function jump(c, to, tx, dur) {
-    const r = rectOf(to);
-    const up = c.y - r.top;
-    c.jump = { t: 0, dur: dur ?? clamp(0.32 + Math.hypot(tx - c.x, up) / 1600, 0.32, 0.7), fx: c.x, fy: c.y, tx, to, h: up > 0 ? up * 0.25 + 46 : 22 };
-    c.face = Math.sign(tx - c.x) || c.face;
-  }
-
   let last = performance.now(), side = -1;
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
@@ -186,106 +151,23 @@ export function initCats({ audio, mobile }) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
+    if (residents) {
+      residents.step(dt, t, mouse, H);
+      residents.draw(ctx, t);
+    } else {
     // The line of cats keeps to one side of the cursor and only swaps sides once the cursor has
     // clearly crossed over. (Tying the target to each cat's own facing made it flip forever.)
     const lead = cats[0];
     if (lead.x < mouse.x - 30) side = -1;
     else if (lead.x > mouse.x + 30) side = 1;
 
-    const mv = Math.hypot(mouse.x - hunt.px, mouse.y - hunt.py) / Math.max(dt, 1e-3);
-    hunt.px = mouse.x; hunt.py = mouse.y;
-    hunt.energy = Math.max(hunt.energy * Math.exp(-dt * 1.1), mv > 900 ? 1 : 0);
-    hunt.calm = mv < 40 ? hunt.calm + dt : 0;
-    hunt.cooldown -= dt;
 
-    const target = perchMode ? ledgeAt(mouse.x, mouse.y) : null;
 
     cats.forEach((c, i) => {
       // blinking and ear twitches keep them alive even when nothing happens
       c.blinkT -= dt;
       if (c.blinkT < 0) { c.blink = 0.1; if (c.blinkT < -0.13) { c.blink = 1; c.blinkT = 2 + Math.random() * 4.5; } }
       c.twitch = c.twitch > 0 ? c.twitch - dt : (Math.random() < dt * 0.15 ? 0.3 : 0);
-
-      if (perchMode) {
-        c.surf ??= FLOOR;
-        // in the air: a jump (or a pounce) lands on a ledge that may itself be moving with the page
-        if (c.jump) {
-          const j = c.jump;
-          j.t += dt;
-          const u = Math.min(1, j.t / j.dur);
-          const ty = rectOf(j.to).top;
-          c.x = j.fx + (j.tx - j.fx) * u;
-          c.y = j.fy + (ty - j.fy) * u - Math.sin(u * Math.PI) * j.h;
-          c.state = 'leap'; c.leapTilt = (u - 0.5) * 0.6;
-          if (u >= 1) {
-            c.surf = j.to; c.jump = null; c.state = 'sit'; c.leapTilt = 0; c.still = 0.4; c.vx = 0;
-            if (j.pounce) {
-              hunt.cooldown = 6; hunt.energy = 0;
-              hearts.push({ x: c.x + c.face * 20, y: c.y - 46, t: 0 });
-              if (Math.random() < 0.6) audio.sfx.mrrp();
-            }
-          }
-          return;
-        }
-        // the hunt: a fast flick and a sudden stop -> crouch, wiggle, pounce onto the cursor's ledge
-        if (i === 0) {
-          const d = Math.hypot(mouse.x - c.x, mouse.y - c.y);
-          if (!c.crouch && hunt.cooldown <= 0 && hunt.energy > 0.45 && hunt.calm > 0.12 && d > 70 && d < 380 && c.state !== 'sleep') {
-            c.crouch = { t: 0, to: target };
-            c.face = Math.sign(mouse.x - c.x) || c.face;
-          }
-          if (c.crouch) {
-            c.crouch.t += dt;
-            c.state = 'crouch'; c.vx = 0; c.still = 0;
-            c.y = rectOf(c.surf).top;
-            if (c.crouch.t > 0.8) {
-              const [lo, hi] = span(c.crouch.to);
-              jump(c, c.crouch.to, clamp(mouse.x - Math.sign(mouse.x - c.x || 1) * 20, lo, hi), 0.42);
-              c.jump.pounce = true; c.jump.h = Math.max(c.jump.h, 70);
-              c.crouch = null;
-            }
-            return;
-          }
-        }
-        // the ledge scrolled away or vanished: hop down to the floor
-        if (c.surf !== FLOOR) {
-          const r = c.surf.getBoundingClientRect();
-          if (!visible.has(c.surf) || !usable(c.surf, r) || c.x < r.left - 10 || c.x > r.right + 10) {
-            jump(c, FLOOR, c.x, 0.4);
-            return;
-          }
-        }
-        c.y = rectOf(c.surf).top;
-        // follow the cursor's ledge, one cat after another
-        if (c.surf !== target) {
-          c.wait = (c.wait || 0) + dt;
-          c.state = c.speed > 22 ? 'walk' : 'sit';
-          if (c.wait > 0.18 + i * 0.22) {
-            const [lo, hi] = span(target);
-            jump(c, target, clamp(mouse.x + side * (46 + 62 * i) * scale * catScale, lo, hi));
-            c.wait = 0;
-          }
-          return;
-        }
-        c.wait = 0;
-        // walk along the ledge
-        const [lo, hi] = span(c.surf);
-        const tx = clamp(mouse.x + side * (46 + 62 * i) * scale * catScale, lo, hi);
-        const dx = tx - c.x;
-        const want = Math.abs(dx) > 8 ? Math.sign(dx) * Math.min(380 * (1 - i * 0.06), (Math.abs(dx) - 8) * 3.2) : 0;
-        c.vx += (want - c.vx) * (1 - Math.exp(-dt * 7));
-        c.x = clamp(c.x + c.vx * dt, lo - 12, hi + 12);
-        c.speed = Math.abs(c.vx);
-        if (c.speed > 40) c.face = Math.sign(c.vx);
-        else if (c.speed < 22) c.face = Math.sign(mouse.x - c.x) || c.face;
-        c.phase += c.speed * dt * 0.11;
-        if (c.speed > 22) { c.still = 0; c.state = 'walk'; } else {
-          c.still += dt;
-          c.state = c.still > 8 + i * 1.5 ? 'sleep' : c.still > 0.35 ? 'sit' : c.state;
-        }
-        if (!mouse.inside) c.state = c.still > 1 ? 'sleep' : c.state;
-        return;
-      }
 
       const tx = mouse.x + side * (46 + 62 * i) * scale * catScale;
       const ty = fine ? mouse.y + (34 + i * 5) * scale : H - 16;
@@ -334,18 +216,10 @@ export function initCats({ audio, mobile }) {
       // draw back to front so the leader is on top
       for (let i = cats.length - 1; i >= 0; i--) {
         const c = cats[i];
-        if (STYLE !== 'house') { drawCat(c, t); continue; }
-        const sc = scale * catScale;
-        // eyes follow the cursor from wherever the head is
-        const hx = c.x + c.face * 27 * sc, hy = c.y - 36 * sc;
-        const lx = Math.max(-1, Math.min(1, ((mouse.x - hx) * c.face) / 160));
-        const ly = Math.max(-1, Math.min(1, (mouse.y - hy) / 160));
-        ctx.save();
-        ctx.translate(c.x, c.y);
-        ctx.scale(c.face * sc, sc);
-        drawHouseCat(ctx, c, t, lx, ly);
-        ctx.restore();
+        drawCat(c, t);
       }
+    }
+
     }
 
     for (let i = hearts.length - 1; i >= 0; i--) {
@@ -374,6 +248,6 @@ export function initCats({ audio, mobile }) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  if (import.meta.env.DEV) { window.__cats = cats; window.__hunt = hunt; }
+  if (import.meta.env.DEV) { window.__cats = residents ? residents.cats : cats; }
   return { wake() {} };
 }
